@@ -6,7 +6,6 @@ import {
   Settings,
   Trash2,
   X,
-  Save,
   FileText,
 } from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
@@ -92,6 +91,17 @@ function App() {
     }
   };
 
+  const handleDoubtClick = () => {
+    window.open("https://chat.openai.com", "_blank", "noopener,noreferrer");
+  };
+
+  useEffect(() => {
+    if (activeTab === "doubt") {
+      window.location.assign("https://chat.openai.com");
+      setActiveTab("subjects");
+    }
+  }, [activeTab]);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <header className="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
@@ -155,17 +165,20 @@ function App() {
               "calendar",
               "planner",
               "syllabus",
+              "doubt",
             ].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={
+                  tab === "doubt" ? handleDoubtClick : () => setActiveTab(tab)
+                }
                 className={`px-6 py-3 font-medium capitalize transition-colors whitespace-nowrap ${
                   activeTab === tab ?
                     "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
                   : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                 }`}
               >
-                {tab}
+                {tab === "doubt" ? "DOUBT Clear..." : tab}
               </button>
             ))}
           </div>
@@ -245,7 +258,7 @@ function App() {
               </button>
             </div>
             <div className="p-6 space-y-6">
-              {}
+              {/* Danger Zone */}
               <div>
                 <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4">
                   Danger Zone
