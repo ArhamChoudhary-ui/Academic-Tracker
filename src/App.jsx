@@ -14,6 +14,9 @@ import Dashboard from "./components/Dashboard";
 import Charts from "./components/Charts";
 import StudyTracker from "./components/StudyTracker";
 import StudyTimer from "./components/StudyTimer";
+import StudyCalendar from "./components/StudyCalendar";
+import SubjectPlanner from "./components/SubjectPlanner";
+import SyllabusPdfHub from "./components/SyllabusPdfHub";
 import ReportView from "./components/ReportView";
 import { SUBJECTS, createEmptySubjectData } from "./utils/data";
 import { clearAllStudySessions } from "./utils/study";
@@ -143,21 +146,28 @@ function App() {
           </div>
 
           <div className="flex gap-2 border-t border-gray-200 dark:border-gray-700 -mb-px overflow-x-auto">
-            {["subjects", "dashboard", "charts", "study", "timer"].map(
-              (tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-3 font-medium capitalize transition-colors whitespace-nowrap ${
-                    activeTab === tab ?
-                      "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ),
-            )}
+            {[
+              "subjects",
+              "dashboard",
+              "charts",
+              "study",
+              "timer",
+              "calendar",
+              "planner",
+              "syllabus",
+            ].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-3 font-medium capitalize transition-colors whitespace-nowrap ${
+                  activeTab === tab ?
+                    "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
         </div>
       </header>
@@ -206,6 +216,9 @@ function App() {
             )}
             {activeTab === "study" && <StudyTracker />}
             {activeTab === "timer" && <StudyTimer />}
+            {activeTab === "calendar" && <StudyCalendar />}
+            {activeTab === "planner" && <SubjectPlanner />}
+            {activeTab === "syllabus" && <SyllabusPdfHub />}
           </>
         }
       </main>
