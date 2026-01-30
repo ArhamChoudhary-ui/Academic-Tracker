@@ -13,24 +13,30 @@ import {
   exportToCSV,
 } from "./utils/storage";
 function App() {
-  const [subjectsData, setSubjectsData] = useState(createEmptySubjectData());
+  const [subjectsData, setSubjectsData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState("light");
-  const [activeTab, setActiveTab] = useState("subjects"); // subjects, dashboard, charts
+  const [activeTab, setActiveTab] = useState("subjects");
   const [showSettings, setShowSettings] = useState(false);
+
   useEffect(() => {
     const savedData = loadFromStorage();
-    if (savedData) {
-      setSubjectsData(savedData);
-    }
+    const dataToUse = savedData || createEmptySubjectData();
+    setSubjectsData(dataToUse);
+    setIsLoading(false);
+
     const savedTheme = loadTheme();
     setTheme(savedTheme);
     if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");
     }
   }, []);
+
   useEffect(() => {
-    saveToStorage(subjectsData);
-  }, [subjectsData]);
+    if (subjectsData !== null && !isLoading) {
+      saveToStorage(subjectsData);
+    }
+  }, [subjectsData, isLoading]);
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -97,11 +103,9 @@ function App() {
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
               >
-                {theme === "light" ? (
+                {theme === "light" ?
                   <Moon size={20} className="text-gray-700" />
-                ) : (
-                  <Sun size={20} className="text-yellow-400" />
-                )}
+                : <Sun size={20} className="text-yellow-400" />}
               </button>
             </div>
           </div>
@@ -112,9 +116,9 @@ function App() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-6 py-3 font-medium capitalize transition-colors ${
-                  activeTab === tab
-                    ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  activeTab === tab ?
+                    "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                 }`}
               >
                 {tab}
@@ -125,35 +129,49 @@ function App() {
       </header>
       {}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === "subjects" && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                My Subjects
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {SUBJECTS.length} subjects enrolled
+        {isLoading ?
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-gray-600 dark:text-gray-400">
+                Loading your data...
               </p>
             </div>
-            {SUBJECTS.map((subject) => (
-              <SubjectCard
-                key={subject}
-                subject={subject}
-                subjectData={subjectsData[subject]}
-                onUpdate={handleSubjectUpdate}
-              />
-            ))}
           </div>
-        )}
-        {activeTab === "dashboard" && <Dashboard subjectsData={subjectsData} />}
-        {activeTab === "charts" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-              Performance Charts
-            </h2>
-            <Charts subjectsData={subjectsData} />
-          </div>
-        )}
+        : <>
+            {activeTab === "subjects" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    My Subjects
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {SUBJECTS.length} subjects enrolled
+                  </p>
+                </div>
+                {SUBJECTS.map((subject) => (
+                  <SubjectCard
+                    key={subject}
+                    subject={subject}
+                    subjectData={subjectsData[subject]}
+                    onUpdate={handleSubjectUpdate}
+                  />
+                ))}
+              </div>
+            )}
+            {activeTab === "dashboard" && (
+              <Dashboard subjectsData={subjectsData} />
+            )}
+            {activeTab === "charts" && (
+              <div>
+                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+                  Performance Charts
+                </h2>
+                <Charts subjectsData={subjectsData} />
+              </div>
+            )}
+          </>
+        }
       </main>
       {}
       {showSettings && (
