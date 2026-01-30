@@ -17,7 +17,8 @@ import {
   Radar,
 } from "recharts";
 import { getScaledMarks } from "../utils/calculations";
-const Charts = ({ subjectsData }) => {
+
+const Charts = ({ subjectsData, reportMode = false }) => {
   const finalTotalsData = Object.entries(subjectsData).map(
     ([subject, data]) => {
       const scaledMarks = getScaledMarks(data.marks);
@@ -180,8 +181,7 @@ const Charts = ({ subjectsData }) => {
             <button
               key={index}
               className="text-xs p-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              onClick={() => {
-              }}
+              onClick={() => {}}
             >
               {subject.subject}
             </button>

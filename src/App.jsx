@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Moon, Sun, Download, Settings, Trash2, X, Save } from "lucide-react";
+import {
+  Moon,
+  Sun,
+  Download,
+  Settings,
+  Trash2,
+  X,
+  Save,
+  FileText,
+} from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
 import Dashboard from "./components/Dashboard";
 import Charts from "./components/Charts";
+import StudyTracker from "./components/StudyTracker";
+import StudyTimer from "./components/StudyTimer";
+import ReportView from "./components/ReportView";
 import { SUBJECTS, createEmptySubjectData } from "./utils/data";
+import { clearAllStudySessions } from "./utils/study";
+import { clearAllTimerSessions } from "./utils/timerStorage";
 import {
   saveToStorage,
   loadFromStorage,
@@ -12,12 +26,14 @@ import {
   clearStorage,
   exportToCSV,
 } from "./utils/storage";
+
 function App() {
   const [subjectsData, setSubjectsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState("light");
   const [activeTab, setActiveTab] = useState("subjects");
   const [showSettings, setShowSettings] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     const savedData = loadFromStorage();
@@ -37,6 +53,7 @@ function App() {
       saveToStorage(subjectsData);
     }
   }, [subjectsData, isLoading]);
+
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -47,15 +64,18 @@ function App() {
       document.documentElement.classList.remove("dark");
     }
   };
+
   const handleSubjectUpdate = (subject, data) => {
     setSubjectsData((prev) => ({
       ...prev,
       [subject]: data,
     }));
   };
+
   const handleExport = () => {
     exportToCSV(subjectsData);
   };
+
   const handleClearData = () => {
     if (
       window.confirm(
@@ -63,12 +83,14 @@ function App() {
       )
     ) {
       clearStorage();
+      clearAllStudySessions();
+      clearAllTimerSessions();
       setSubjectsData(createEmptySubjectData());
     }
   };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-      {}
       <header className="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -78,6 +100,16 @@ function App() {
               </h1>
             </div>
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowReport(true)}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="View Report"
+              >
+                <FileText
+                  size={20}
+                  className="text-gray-700 dark:text-gray-300"
+                />
+              </button>
               <button
                 onClick={handleExport}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -109,25 +141,27 @@ function App() {
               </button>
             </div>
           </div>
-          {}
-          <div className="flex gap-2 border-t border-gray-200 dark:border-gray-700 -mb-px">
-            {["subjects", "dashboard", "charts"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 font-medium capitalize transition-colors ${
-                  activeTab === tab ?
-                    "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
+
+          <div className="flex gap-2 border-t border-gray-200 dark:border-gray-700 -mb-px overflow-x-auto">
+            {["subjects", "dashboard", "charts", "study", "timer"].map(
+              (tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-3 font-medium capitalize transition-colors whitespace-nowrap ${
+                    activeTab === tab ?
+                      "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ),
+            )}
           </div>
         </div>
       </header>
-      {}
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ?
           <div className="flex items-center justify-center h-96">
@@ -170,10 +204,19 @@ function App() {
                 <Charts subjectsData={subjectsData} />
               </div>
             )}
+            {activeTab === "study" && <StudyTracker />}
+            {activeTab === "timer" && <StudyTimer />}
           </>
         }
       </main>
-      {}
+
+      {showReport && subjectsData && (
+        <ReportView
+          subjectsData={subjectsData}
+          onClose={() => setShowReport(false)}
+        />
+      )}
+
       {showSettings && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">

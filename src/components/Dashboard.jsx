@@ -1,13 +1,26 @@
 import React from "react";
-import { TrendingUp, Award, BookOpen } from "lucide-react";
-import { getScaledMarks, getGrade, calculateGPA } from "../utils/calculations";
+import { TrendingUp, Award, BookOpen, Zap } from "lucide-react";
+import {
+  getScaledMarks,
+  getGrade,
+  calculateGPA,
+  calculateConsistencyScore,
+  getConsistencyLabel,
+  getConsistencyColor,
+} from "../utils/calculations";
 import { SUBJECTS } from "../utils/data";
+
 const Dashboard = ({ subjectsData }) => {
   const subjectStats = SUBJECTS.map((subject) => {
     const data = subjectsData[subject];
     const scaledMarks = getScaledMarks(data.marks);
     const finalTotal = scaledMarks.finalTotal;
     const percentage = finalTotal;
+
+    const allMarks = Object.values(data.marks || {}).filter((m) => m !== null);
+    const consistency =
+      allMarks.length > 0 ? calculateConsistencyScore(allMarks) : 0;
+
     return {
       name: subject,
       finalTotal,
@@ -16,39 +29,47 @@ const Dashboard = ({ subjectsData }) => {
       gpa: calculateGPA(percentage),
       scaledInternal: scaledMarks.scaledInternal,
       lab: scaledMarks.lab,
+      consistency,
     };
   });
+
   const validPercentages = subjectStats
     .filter((s) => s.percentage > 0)
     .map((s) => s.percentage);
   const overallPercentage =
-    validPercentages.length > 0
-      ? validPercentages.reduce((sum, p) => sum + p, 0) /
-        validPercentages.length
-      : 0;
+    validPercentages.length > 0 ?
+      validPercentages.reduce((sum, p) => sum + p, 0) / validPercentages.length
+    : 0;
   const overallGPA =
-    validPercentages.length > 0
-      ? subjectStats
-          .filter((s) => s.percentage > 0)
-          .reduce((sum, s) => sum + s.gpa, 0) / validPercentages.length
-      : 0;
+    validPercentages.length > 0 ?
+      subjectStats
+        .filter((s) => s.percentage > 0)
+        .reduce((sum, s) => sum + s.gpa, 0) / validPercentages.length
+    : 0;
+
   const completedSubjects = subjectStats.filter((s) => s.percentage > 0);
   const bestSubject =
-    completedSubjects.length > 0
-      ? completedSubjects.reduce((best, current) =>
-          current.percentage > best.percentage ? current : best,
-        )
-      : null;
+    completedSubjects.length > 0 ?
+      completedSubjects.reduce((best, current) =>
+        current.percentage > best.percentage ? current : best,
+      )
+    : null;
   const worstSubject =
-    completedSubjects.length > 0
-      ? completedSubjects.reduce((worst, current) =>
-          current.percentage < worst.percentage ? current : worst,
-        )
-      : null;
+    completedSubjects.length > 0 ?
+      completedSubjects.reduce((worst, current) =>
+        current.percentage < worst.percentage ? current : worst,
+      )
+    : null;
+
+  const averageConsistency =
+    completedSubjects.length > 0 ?
+      completedSubjects.reduce((sum, s) => sum + s.consistency, 0) /
+      completedSubjects.length
+    : 0;
+
   return (
     <div className="space-y-6">
-      {}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -103,8 +124,28 @@ const Dashboard = ({ subjectsData }) => {
             </div>
           </div>
         </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Consistency Score
+              </p>
+              <p
+                className={`text-3xl font-bold mt-2 ${getConsistencyColor(averageConsistency)}`}
+              >
+                {averageConsistency.toFixed(0)}/100
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                {getConsistencyLabel(averageConsistency)}
+              </p>
+            </div>
+            <div className="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+              <Zap className="text-orange-600 dark:text-orange-400" size={24} />
+            </div>
+          </div>
+        </div>
       </div>
-      {}
+
       {bestSubject && worstSubject && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl shadow-lg p-6 border-2 border-green-200 dark:border-green-700">
@@ -159,6 +200,9 @@ const Dashboard = ({ subjectsData }) => {
                 <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
                   GPA
                 </th>
+                <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Consistency
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -182,13 +226,13 @@ const Dashboard = ({ subjectsData }) => {
                   <td className="text-center py-3 px-4">
                     <span
                       className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-                        subject.grade === "S" || subject.grade === "A"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                          : subject.grade === "B" || subject.grade === "C"
-                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-                            : subject.grade === "D" || subject.grade === "E"
-                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
-                              : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                        subject.grade === "S" || subject.grade === "A" ?
+                          "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                        : subject.grade === "B" || subject.grade === "C" ?
+                          "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                        : subject.grade === "D" || subject.grade === "E" ?
+                          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                        : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
                       }`}
                     >
                       {subject.grade || "N/A"}
@@ -196,6 +240,13 @@ const Dashboard = ({ subjectsData }) => {
                   </td>
                   <td className="text-center py-3 px-4 text-sm font-semibold text-gray-900 dark:text-white">
                     {subject.gpa.toFixed(1)}
+                  </td>
+                  <td className="text-center py-3 px-4">
+                    <span
+                      className={`text-xs font-bold ${getConsistencyColor(subject.consistency)}`}
+                    >
+                      {subject.consistency.toFixed(0)}
+                    </span>
                   </td>
                 </tr>
               ))}
