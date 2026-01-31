@@ -9,6 +9,7 @@ import StudyTimer from "./components/StudyTimer";
 import StudyCalendar from "./components/StudyCalendar";
 import SubjectPlanner from "./components/SubjectPlanner";
 import SyllabusPdfHub from "./components/SyllabusPdfHub";
+import AiStudyAssistant from "./components/AiStudyAssistant";
 import ReportView from "./components/ReportView";
 import SplashScreen from "./components/SplashScreen";
 import LoadingScreen from "./components/LoadingScreen";
@@ -75,10 +76,6 @@ function App() {
     }
   };
 
-  const handleDoubtClick = () => {
-    window.open("https://chat.openai.com", "_blank", "noopener,noreferrer");
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white">
       <AnimatePresence>
@@ -139,22 +136,18 @@ function App() {
                   "calendar",
                   "planner",
                   "syllabus",
-                  "doubt",
+                  "ai-assistant",
                 ].map((tab) => (
                   <button
                     key={tab}
-                    onClick={
-                      tab === "doubt" ? handleDoubtClick : (
-                        () => setActiveTab(tab)
-                      )
-                    }
+                    onClick={() => setActiveTab(tab)}
                     className={`py-4 px-0 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
                       activeTab === tab ?
                         "border-white text-white"
                       : "border-transparent text-white/60 hover:text-white"
                     }`}
                   >
-                    {tab === "doubt" ? "DOUBT Clear..." : tab}
+                    {tab === "ai-assistant" ? "AI Assistant" : tab}
                   </button>
                 ))}
               </nav>
@@ -203,6 +196,7 @@ function App() {
             {activeTab === "calendar" && <StudyCalendar />}
             {activeTab === "planner" && <SubjectPlanner />}
             {activeTab === "syllabus" && <SyllabusPdfHub />}
+            {activeTab === "ai-assistant" && <AiStudyAssistant />}
           </main>
 
           {showReport && subjectsData && (
