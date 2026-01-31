@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence } from "framer-motion";
-import { Download, Settings, Trash2, X, FileText } from "lucide-react";
+import {
+  Download,
+  Settings,
+  Trash2,
+  X,
+  FileText,
+  Gamepad2,
+} from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
 import Dashboard from "./components/Dashboard";
 import Charts from "./components/Charts";
@@ -10,9 +17,13 @@ import StudyCalendar from "./components/StudyCalendar";
 import SubjectPlanner from "./components/SubjectPlanner";
 import SyllabusPdfHub from "./components/SyllabusPdfHub";
 import AiStudyAssistant from "./components/AiStudyAssistant";
+import ExamQuestionGenerator from "./components/ExamQuestionGenerator";
 import ReportView from "./components/ReportView";
 import SplashScreen from "./components/SplashScreen";
 import LoadingScreen from "./components/LoadingScreen";
+
+// Lazy load Tetris game
+const TetrisGame = lazy(() => import("./components/TetrisGame"));
 import { SUBJECTS, createEmptySubjectData } from "./utils/data";
 import { clearAllStudySessions } from "./utils/study";
 import { clearAllTimerSessions } from "./utils/timerStorage";
@@ -31,6 +42,7 @@ function App() {
   const [activeTab, setActiveTab] = useState("subjects");
   const [showSettings, setShowSettings] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [showTetris, setShowTetris] = useState(false);
 
   useEffect(() => {
     const savedData = loadFromStorage();
@@ -103,6 +115,13 @@ function App() {
                 </h1>
                 <div className="flex items-center gap-6">
                   <button
+                    onClick={() => setShowTetris(true)}
+                    className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                    title="Break Mode"
+                  >
+                    <Gamepad2 size={20} />
+                  </button>
+                  <button
                     onClick={() => setShowReport(true)}
                     className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                     title="View Report"
@@ -137,6 +156,7 @@ function App() {
                   "planner",
                   "syllabus",
                   "ai-assistant",
+                  "exam-questions",
                 ].map((tab) => (
                   <button
                     key={tab}
@@ -147,7 +167,11 @@ function App() {
                       : "border-transparent text-white/60 hover:text-white"
                     }`}
                   >
-                    {tab === "ai-assistant" ? "AI Assistant" : tab}
+                    {tab === "ai-assistant" ?
+                      "AI Assistant"
+                    : tab === "exam-questions" ?
+                      "Exam Questions"
+                    : tab}
                   </button>
                 ))}
               </nav>
@@ -197,6 +221,7 @@ function App() {
             {activeTab === "planner" && <SubjectPlanner />}
             {activeTab === "syllabus" && <SyllabusPdfHub />}
             {activeTab === "ai-assistant" && <AiStudyAssistant />}
+            {activeTab === "exam-questions" && <ExamQuestionGenerator />}
           </main>
 
           {showReport && subjectsData && (
@@ -245,6 +270,14 @@ function App() {
             </div>
           )}
 
+          {/* Tetris Game Modal */}
+          <Suspense fallback={null}>
+            <TetrisGame
+              isOpen={showTetris}
+              onClose={() => setShowTetris(false)}
+            />
+          </Suspense>
+
           <footer className="mt-16 py-8 border-t border-white/10 text-center text-sm text-white/60 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
             <p>Academic Tracker • Personal Mark Management</p>
             <p className="text-xs text-white/40 mt-1">Built by Arham</p>
@@ -254,4 +287,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
