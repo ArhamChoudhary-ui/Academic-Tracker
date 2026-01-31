@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
-import {
-  Moon,
-  Sun,
-  Download,
-  Settings,
-  Trash2,
-  X,
-  FileText,
-} from "lucide-react";
+import { Download, Settings, Trash2, X, FileText } from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
 import Dashboard from "./components/Dashboard";
 import Charts from "./components/Charts";
@@ -26,8 +18,6 @@ import { clearAllTimerSessions } from "./utils/timerStorage";
 import {
   saveToStorage,
   loadFromStorage,
-  saveTheme,
-  loadTheme,
   clearStorage,
   exportToCSV,
 } from "./utils/storage";
@@ -37,7 +27,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [introStage, setIntroStage] = useState("splash");
   const [loadingComplete, setLoadingComplete] = useState(false);
-  const [theme, setTheme] = useState("light");
   const [activeTab, setActiveTab] = useState("subjects");
   const [showSettings, setShowSettings] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -47,12 +36,6 @@ function App() {
     const dataToUse = savedData || createEmptySubjectData();
     setSubjectsData(dataToUse);
     setIsLoading(false);
-
-    const savedTheme = loadTheme();
-    setTheme(savedTheme);
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    }
   }, []);
 
   useEffect(() => {
@@ -67,17 +50,6 @@ function App() {
       setIntroStage("app");
     }
   }, [introStage, loadingComplete, isLoading]);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    saveTheme(newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
 
   const handleSubjectUpdate = (subject, data) => {
     setSubjectsData((prev) => ({

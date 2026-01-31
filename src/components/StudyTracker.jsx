@@ -66,20 +66,21 @@ const StudyTracker = () => {
   };
 
   const getFocusColor = (focus) => {
-    if (focus >= 4) return "text-green-600 dark:text-green-400";
-    if (focus >= 3) return "text-blue-600 dark:text-blue-400";
-    return "text-yellow-600 dark:text-yellow-400";
+    if (focus >= 4) return "text-emerald-300";
+    if (focus >= 3) return "text-blue-300";
+    return "text-yellow-300";
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Study Sessions
-        </h2>
+        <div>
+          <h2 className="text-3xl font-bold text-white mb-2">Study Sessions</h2>
+          <p className="text-white/60">Track your study time and focus</p>
+        </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold"
         >
           <Plus size={20} />
           New Session
@@ -87,14 +88,14 @@ const StudyTracker = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border-2 border-blue-500 dark:border-blue-600">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+          <h3 className="text-lg font-bold text-white mb-6">
             Log Study Session
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-white/70 mb-3">
                 Subject
               </label>
               <select
@@ -102,7 +103,7 @@ const StudyTracker = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, subject: e.target.value })
                 }
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white/10 border border-white/10 rounded-lg text-white font-semibold focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all"
               >
                 {SUBJECTS.map((subject) => (
                   <option key={subject} value={subject}>
@@ -113,7 +114,7 @@ const StudyTracker = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-white/70 mb-3">
                 Duration (minutes)
               </label>
               <input
@@ -124,12 +125,12 @@ const StudyTracker = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, duration: e.target.value })
                 }
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white/10 border border-white/10 rounded-lg text-white font-semibold focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-white/70 mb-3">
                 Focus Level (1-5)
               </label>
               <input
@@ -142,13 +143,16 @@ const StudyTracker = () => {
                 }
                 className="w-full"
               />
-              <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Level: <span className="font-semibold">{formData.focus}/5</span>
+              <div className="text-center text-sm text-white/60 mt-2">
+                Level:{" "}
+                <span className="font-semibold text-white">
+                  {formData.focus}/5
+                </span>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-white/70 mb-3">
                 Note (optional)
               </label>
               <input
@@ -158,7 +162,7 @@ const StudyTracker = () => {
                   setFormData({ ...formData, note: e.target.value })
                 }
                 placeholder="e.g., Covered arrays and sorting"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-white/10 border border-white/10 rounded-lg text-white font-semibold placeholder:text-white/30 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all"
               />
             </div>
           </div>
@@ -166,13 +170,13 @@ const StudyTracker = () => {
           <div className="flex gap-3">
             <button
               onClick={handleAddSession}
-              className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
+              className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold"
             >
               Save Session
             </button>
             <button
               onClick={() => setShowForm(false)}
-              className="flex-1 px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors font-medium"
+              className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors font-semibold"
             >
               Cancel
             </button>
@@ -180,7 +184,7 @@ const StudyTracker = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {SUBJECTS.map((subject) => {
           const stats = subjectStats[subject] || {
             totalMinutes: 0,
@@ -192,28 +196,26 @@ const StudyTracker = () => {
           return (
             <div
               key={subject}
-              className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md"
+              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-white/[0.08] transition-all duration-200"
             >
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3 truncate">
+              <h3 className="font-bold text-white mb-4 truncate text-lg">
                 {subject}
               </h3>
 
-              <div className="space-y-2 text-sm">
+              <div className="space-y-3 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
+                  <span className="text-white/60">
                     <Clock size={16} className="inline mr-2" />
                     Total Time
                   </span>
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="font-semibold text-white">
                     {formatDuration(stats.totalMinutes)}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Sessions
-                  </span>
-                  <span className="font-semibold text-gray-900 dark:text-white">
+                  <span className="text-white/60">Sessions</span>
+                  <span className="font-semibold text-white">
                     {stats.sessionCount}
                   </span>
                 </div>
@@ -221,16 +223,14 @@ const StudyTracker = () => {
                 {stats.sessionCount > 0 && (
                   <>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Avg Duration
-                      </span>
-                      <span className="font-semibold text-gray-900 dark:text-white">
+                      <span className="text-white/60">Avg Duration</span>
+                      <span className="font-semibold text-white">
                         {formatDuration(Math.round(stats.averageDuration))}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">
+                      <span className="text-white/60">
                         <Zap size={16} className="inline mr-2" />
                         Avg Focus
                       </span>
@@ -252,9 +252,7 @@ const StudyTracker = () => {
 
       {sessions.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Recent Sessions
-          </h3>
+          <h3 className="text-xl font-bold text-white mb-6">Recent Sessions</h3>
           <div className="space-y-3">
             {[...sessions]
               .reverse()
@@ -273,13 +271,13 @@ const StudyTracker = () => {
                 return (
                   <div
                     key={session.id}
-                    className="bg-white dark:bg-gray-800 rounded-lg p-4 flex items-center justify-between"
+                    className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 flex items-center justify-between hover:bg-white/[0.08] transition-all duration-200"
                   >
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-semibold text-white">
                         {session.subject}
                       </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-white/60 mt-1">
                         {timeStr} on {dateStr} •{" "}
                         {formatDuration(session.duration)}
                         {" • "}
@@ -292,14 +290,14 @@ const StudyTracker = () => {
                         </span>
                       </p>
                       {session.note && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-xs text-white/50 mt-2">
                           {session.note}
                         </p>
                       )}
                     </div>
                     <button
                       onClick={() => handleDeleteSession(session.id)}
-                      className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg transition-colors"
+                      className="p-2 hover:bg-red-500/20 text-red-300 rounded-lg transition-colors"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -311,7 +309,7 @@ const StudyTracker = () => {
       )}
 
       {sessions.length === 0 && !showForm && (
-        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-16 text-white/50">
           <Clock size={48} className="mx-auto mb-4 opacity-50" />
           <p>No study sessions logged yet. Start tracking your study time!</p>
         </div>

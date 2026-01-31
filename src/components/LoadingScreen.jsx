@@ -39,7 +39,7 @@ export default function LoadingScreen({ onComplete }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-blue-600"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

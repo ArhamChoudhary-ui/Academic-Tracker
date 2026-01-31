@@ -190,30 +190,29 @@ const Charts = ({ subjectsData, reportMode = false }) => {
           ))}
         </div>
       </div>
-      {}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+      <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">
+        <h3 className="text-lg font-semibold text-white mb-6">
           Performance Comparison Across Subjects
         </h3>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={finalTotalsData}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#374151"
-              opacity={0.1}
+              stroke="rgba(255,255,255,0.1)"
+              opacity={0.2}
             />
             <XAxis
               dataKey="subject"
-              stroke="#9CA3AF"
+              stroke="rgba(255,255,255,0.5)"
               style={{ fontSize: "12px" }}
             />
             <YAxis
-              stroke="#9CA3AF"
+              stroke="rgba(255,255,255,0.5)"
               style={{ fontSize: "12px" }}
               domain={[0, 100]}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+            <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
             <Line
               type="monotone"
               dataKey="Final Total"
