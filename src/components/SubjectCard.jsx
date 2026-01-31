@@ -1,13 +1,7 @@
 import React, { useState } from "react";
-import {
-  ChevronDown,
-  ChevronUp,
-  Calculator,
-  Save,
-  TrendingUp,
-} from "lucide-react";
 import { ASSESSMENT_COMPONENTS } from "../utils/data";
-import { getScaledMarks, predictFAT } from "../utils/calculations";
+import { getScaledMarks, predictFAT, getGrade } from "../utils/calculations";
+import { ChevronDown, ChevronUp, Save } from "lucide-react";
 const SubjectCard = ({ subject, subjectData, onUpdate }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [marks, setMarks] = useState(subjectData.marks);
@@ -34,62 +28,110 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
   const prediction = predictFAT(marks);
   const finalTotal = scaledMarks.finalTotal;
   const percentage = finalTotal; // Already out of 100
-  const getPercentageColor = (pct) => {
-    if (pct >= 80) return "text-green-600 dark:text-green-400";
-    if (pct >= 60) return "text-blue-600 dark:text-blue-400";
-    if (pct >= 40) return "text-yellow-600 dark:text-yellow-400";
-    return "text-red-600 dark:text-red-400";
-  };
+  const grade = getGrade(percentage);
+  const hasClassAvg = Object.values(classAverage || {}).some(
+    (value) => value !== null && value !== undefined && value !== "",
+  );
+  const deltaVsClass =
+    hasClassAvg ? finalTotal - classScaledMarks.finalTotal : null;
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl">
-      {}
+    <div
+      className={`border-t border-white/10 transition-all duration-300 ${
+        isExpanded ?
+          "bg-black/15 backdrop-blur-sm -mx-6 px-6 py-2 rounded-xl border-white/15"
+        : ""
+      }`}
+    >
       <div
-        className="p-6 cursor-pointer flex items-center justify-between bg-gradient-to-r from-blue-500 to-purple-600 text-white"
         onClick={() => setIsExpanded(!isExpanded)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
+        className={`cursor-pointer py-6 px-0 flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent transition-all duration-300 ${
+          isExpanded ? "pb-4" : ""
+        }`}
       >
         <div className="flex-1">
-          <h3 className="text-xl font-bold">{subject}</h3>
-          <div className="flex gap-4 mt-2 text-sm">
-            <span>Final: {finalTotal.toFixed(2)}/100</span>
-            <span className="font-semibold">{percentage.toFixed(2)}%</span>
+          <h3
+            className={`text-2xl font-bold mb-1 transition-all duration-300 ${
+              isExpanded ? "text-blue-100" : "text-white"
+            }`}
+          >
+            {subject}
+          </h3>
+          <div className="flex items-center gap-6">
+            <div
+              className={`text-sm transition-colors duration-300 ${
+                isExpanded ? "text-white/70" : "text-white/60"
+              }`}
+            >
+              Grade: <span className="font-semibold text-white">{grade}</span>
+            </div>
+            {deltaVsClass !== null && (
+              <div
+                className={`text-sm ${
+                  deltaVsClass >= 0 ? "text-emerald-300" : "text-red-300"
+                }`}
+              >
+                {deltaVsClass >= 0 ? "↑" : "↓"}{" "}
+                {Math.abs(deltaVsClass).toFixed(1)} vs class
+              </div>
+            )}
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSave();
-            }}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-            title="Save changes"
+
+        <div className="text-right flex items-center gap-4">
+          <div
+            className={`transition-transform duration-300 ${
+              isExpanded ? "scale-105" : "scale-100"
+            }`}
           >
-            <Save size={20} />
-          </button>
-          {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+            <div className="text-4xl font-bold text-blue-300">
+              {percentage.toFixed(0)}%
+            </div>
+            <div className="text-xs text-white/50 mt-1">
+              {percentage >= 80 ?
+                "Excellent"
+              : percentage >= 60 ?
+                "Good"
+              : percentage >= 40 ?
+                "Fair"
+              : "Needs Work"}
+            </div>
+          </div>
+          <div
+            className={`transition-all duration-300 ${
+              isExpanded ? "text-blue-300" : (
+                "text-white/40 group-hover:text-white/60"
+              )
+            }`}
+          >
+            {isExpanded ?
+              <ChevronUp size={24} />
+            : <ChevronDown size={24} />}
+          </div>
         </div>
       </div>
-      {}
+
       {isExpanded && (
-        <div className="p-6 space-y-6">
-          {}
+        <div className="py-8 px-0 border-t border-white/15 space-y-8 animate-in fade-in slide-in-from-top-2 duration-300">
+          {/* Original Marks */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Original Marks
-              </h4>
-              <button
-                onClick={() => setShowClassAverage(!showClassAverage)}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                {showClassAverage ? "Hide" : "Show"} Class Average
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <h4 className="text-lg font-bold text-white mb-6">
+              Assessment Marks
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {ASSESSMENT_COMPONENTS.map(({ key, label, max }) => (
                 <div key={key}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-semibold text-white/70 mb-3">
                     {label}
-                    <span className="text-xs text-gray-500 ml-1">(/{max})</span>
                   </label>
                   <input
                     type="number"
@@ -98,241 +140,147 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
                     step="0.5"
                     value={marks[key] === null ? "" : marks[key]}
                     onChange={(e) => handleMarkChange(key, e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15]"
                     placeholder={`Out of ${max}`}
                   />
+                  <p className="text-xs text-white/40 mt-2">Max: {max}</p>
                 </div>
               ))}
             </div>
           </div>
-          {}
-          {showClassAverage && (
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                Class Average Marks
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {ASSESSMENT_COMPONENTS.map(({ key, label, max }) => (
-                  <div key={key}>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {label}
-                      <span className="text-xs text-gray-500 ml-1">
-                        (/{max})
-                      </span>
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max={max}
-                      step="0.5"
-                      value={
-                        classAverage[key] === null ? "" : classAverage[key]
-                      }
-                      onChange={(e) =>
-                        handleClassAverageChange(key, e.target.value)
-                      }
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                      placeholder={`Class avg`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 border-2 border-blue-200 dark:border-blue-700">
-            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Scaled Marks (University System)
-            </h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  CAT-1 Scaled
-                </p>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {scaledMarks.cat1.toFixed(2)}/15
-                </p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  CAT-2 Scaled
-                </p>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {scaledMarks.cat2.toFixed(2)}/15
-                </p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  FAT Scaled
-                </p>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {scaledMarks.fat.toFixed(2)}/40
-                </p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  LAB Scaled
-                </p>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {scaledMarks.lab.toFixed(2)}/25
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-blue-300 dark:border-blue-600">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Internal Total (Scaled)
-                </p>
-                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {scaledMarks.scaledInternal.toFixed(2)}/75
-                </p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-purple-300 dark:border-purple-600">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Final Total
-                </p>
-                <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                  {finalTotal.toFixed(2)}/100
-                </p>
-              </div>
-            </div>
-          </div>
-          {}
-          {showClassAverage && (
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-6 border-2 border-green-200 dark:border-green-700">
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <TrendingUp size={20} />
-                My Performance vs Class Average
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                    Internal (Scaled)
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {scaledMarks.scaledInternal.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">vs</p>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">
-                      {classScaledMarks.scaledInternal.toFixed(2)}
-                    </p>
-                  </div>
-                  <p
-                    className={`text-sm mt-2 font-semibold ${scaledMarks.scaledInternal - classScaledMarks.scaledInternal >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
-                  >
-                    {scaledMarks.scaledInternal -
-                      classScaledMarks.scaledInternal >=
-                    0
-                      ? "+"
-                      : ""}
-                    {(
-                      scaledMarks.scaledInternal -
-                      classScaledMarks.scaledInternal
-                    ).toFixed(2)}
-                  </p>
-                </div>
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                    LAB (Scaled)
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {scaledMarks.lab.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">vs</p>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">
-                      {classScaledMarks.lab.toFixed(2)}
-                    </p>
-                  </div>
-                  <p
-                    className={`text-sm mt-2 font-semibold ${scaledMarks.lab - classScaledMarks.lab >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
-                  >
-                    {scaledMarks.lab - classScaledMarks.lab >= 0 ? "+" : ""}
-                    {(scaledMarks.lab - classScaledMarks.lab).toFixed(2)}
-                  </p>
-                </div>
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border-2 border-green-300 dark:border-green-600">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                    Final Total
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {finalTotal.toFixed(2)}
-                    </p>
-                    <p className="text-sm text-gray-500">vs</p>
-                    <p className="text-lg text-gray-600 dark:text-gray-400">
-                      {classScaledMarks.finalTotal.toFixed(2)}
-                    </p>
-                  </div>
-                  <p
-                    className={`text-sm mt-2 font-semibold ${finalTotal - classScaledMarks.finalTotal >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
-                  >
-                    {finalTotal - classScaledMarks.finalTotal >= 0 ? "+" : ""}
-                    {(finalTotal - classScaledMarks.finalTotal).toFixed(2)}{" "}
-                    points
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-          {}
-          {showPrediction && (
-            <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border-2 border-purple-200 dark:border-purple-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                    <Calculator size={18} />
-                    Predicted FAT Score
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    Based on CAT and Quiz performance trends
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-4xl font-bold text-purple-600 dark:text-purple-400">
-                    {prediction.toFixed(1)}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    out of 100
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="flex gap-3">
+
+          {/* Class Average Toggle */}
+          <div className="border-t border-white/10 pt-8">
             <button
-              onClick={() => setShowPrediction(!showPrediction)}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
+              onClick={() => setShowClassAverage(!showClassAverage)}
+              className="text-sm font-semibold text-blue-300 hover:text-blue-200 transition-all duration-200 hover:translate-x-0.5"
             >
-              <Calculator size={18} />
-              {showPrediction ? "Hide" : "Show"} Prediction
+              {showClassAverage ? "Hide" : "Show"} Class Average Marks
             </button>
+
+            {showClassAverage && (
+              <div className="mt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {ASSESSMENT_COMPONENTS.map(({ key, label, max }) => (
+                    <div key={key}>
+                      <label className="block text-sm font-semibold text-white/70 mb-3">
+                        {label} (Class Avg)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max={max}
+                        step="0.5"
+                        value={
+                          classAverage[key] === null ? "" : classAverage[key]
+                        }
+                        onChange={(e) =>
+                          handleClassAverageChange(key, e.target.value)
+                        }
+                        className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15]"
+                        placeholder={`Class average`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          {}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Notes
-            </label>
+
+          {/* Scaled Marks */}
+          <div className="border-t border-white/10 pt-8">
+            <h4 className="text-lg font-bold text-white mb-6">
+              University Scaling
+            </h4>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
+                <span className="text-white/70">CAT-1 Scaled</span>
+                <span className="text-lg font-semibold text-white">
+                  {scaledMarks.cat1.toFixed(2)} / 15
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
+                <span className="text-white/70">CAT-2 Scaled</span>
+                <span className="text-lg font-semibold text-white">
+                  {scaledMarks.cat2.toFixed(2)} / 15
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
+                <span className="text-white/70">FAT Scaled</span>
+                <span className="text-lg font-semibold text-white">
+                  {scaledMarks.fat.toFixed(2)} / 40
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
+                <span className="text-white/70">LAB Scaled</span>
+                <span className="text-lg font-semibold text-white">
+                  {scaledMarks.lab.toFixed(2)} / 25
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-4 border-b border-white/10">
+                <span className="font-semibold text-white">Internal Total</span>
+                <span className="text-xl font-bold text-blue-300">
+                  {scaledMarks.scaledInternal.toFixed(2)} / 75
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-4">
+                <span className="font-bold text-lg text-white">
+                  Final Total
+                </span>
+                <span className="text-2xl font-bold text-blue-300">
+                  {finalTotal.toFixed(2)} / 100
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="border-t border-white/10 pt-8">
+            <h4 className="text-lg font-bold text-white mb-4">Notes</h4>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+              rows={4}
+              className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white placeholder:text-white/30 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15] resize-none"
               placeholder="Add notes, goals, or reminders for this subject..."
             />
           </div>
-          {}
-          <button
-            onClick={handleSave}
-            className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2"
-          >
-            <Save size={20} />
-            Save Changes
-          </button>
+
+          {/* Prediction Toggle */}
+          <div className="border-t border-white/10 pt-8">
+            <button
+              onClick={() => setShowPrediction(!showPrediction)}
+              className="text-sm font-semibold text-blue-300 hover:text-blue-200 transition-all duration-200 hover:translate-x-0.5"
+            >
+              {showPrediction ? "Hide" : "Show"} FAT Prediction
+            </button>
+
+            {showPrediction && (
+              <div className="mt-6">
+                <div className="text-sm text-white/60 mb-3">
+                  Based on CAT and Quiz performance
+                </div>
+                <div className="text-3xl font-bold text-blue-300">
+                  {prediction.toFixed(1)} / 100
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Save Button */}
+          <div className="border-t border-white/10 pt-8">
+            <button
+              onClick={handleSave}
+              className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:translate-y-0"
+            >
+              <Save size={20} />
+              Save Changes
+            </button>
+          </div>
         </div>
       )}
     </div>
   );
 };
+
 export default SubjectCard;

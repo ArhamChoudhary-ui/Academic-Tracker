@@ -49,12 +49,12 @@ const Charts = ({ subjectsData, reportMode = false }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <p className="font-semibold text-gray-900 dark:text-white mb-2">
+        <div className="bg-gray-900 border border-white/10 p-3 rounded-lg shadow-lg">
+          <p className="font-semibold text-white text-sm mb-2">
             {payload[0]?.payload?.fullSubject || label}
           </p>
           {payload.map((entry, index) => (
-            <p key={index} style={{ color: entry.color }} className="text-sm">
+            <p key={index} style={{ color: entry.color }} className="text-xs">
               {entry.name}: {entry.value.toFixed(2)}
             </p>
           ))}
@@ -65,76 +65,78 @@ const Charts = ({ subjectsData, reportMode = false }) => {
   };
   return (
     <div className="space-y-8">
-      {}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+      <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">
+        <h3 className="text-lg font-semibold text-white mb-6">
           Final Totals (Out of 100)
         </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={finalTotalsData}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#374151"
-              opacity={0.1}
+              stroke="rgba(255,255,255,0.1)"
+              opacity={0.2}
             />
             <XAxis
               dataKey="subject"
-              stroke="#9CA3AF"
+              stroke="rgba(255,255,255,0.5)"
               style={{ fontSize: "12px" }}
             />
             <YAxis
-              stroke="#9CA3AF"
+              stroke="rgba(255,255,255,0.5)"
               style={{ fontSize: "12px" }}
               domain={[0, 100]}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
-            <Bar dataKey="Final Total" fill="#8B5CF6" radius={[8, 8, 0, 0]} />
+            <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
+            <Bar dataKey="Final Total" fill="#3B82F6" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
-      {}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+
+      <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">
+        <h3 className="text-lg font-semibold text-white mb-6">
           Internal (75) vs Lab (25) Breakdown
         </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={finalTotalsData}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#374151"
-              opacity={0.1}
+              stroke="rgba(255,255,255,0.1)"
+              opacity={0.2}
             />
             <XAxis
               dataKey="subject"
-              stroke="#9CA3AF"
+              stroke="rgba(255,255,255,0.5)"
               style={{ fontSize: "12px" }}
             />
-            <YAxis stroke="#9CA3AF" style={{ fontSize: "12px" }} />
+            <YAxis
+              stroke="rgba(255,255,255,0.5)"
+              style={{ fontSize: "12px" }}
+            />
             <Tooltip content={<CustomTooltip />} />
-            <Legend />
+            <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
             <Bar dataKey="Internal" fill="#3B82F6" radius={[8, 8, 0, 0]} />
             <Bar dataKey="Lab" fill="#10B981" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
-      {}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+
+      <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">
+        <h3 className="text-lg font-semibold text-white mb-6">
           Component-wise Performance (Percentage)
         </h3>
         <ResponsiveContainer width="100%" height={500}>
           <RadarChart data={radarData[0] ? [radarData[0]] : []}>
-            <PolarGrid stroke="#374151" />
+            <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis
               dataKey="subject"
-              stroke="#9CA3AF"
+              stroke="rgba(255,255,255,0.5)"
               style={{ fontSize: "12px" }}
             />
             <PolarRadiusAxis
               angle={90}
               domain={[0, 100]}
-              stroke="#9CA3AF"
+              stroke="rgba(255,255,255,0.5)"
               style={{ fontSize: "10px" }}
             />
             <Radar
