@@ -66,6 +66,7 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
           >
             {subject}
           </h3>
+          <p className="text-xs text-white/50">Tap to view and edit marks</p>
           <div className="flex items-center gap-6">
             <div
               className={`text-sm transition-colors duration-300 ${
@@ -122,11 +123,65 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
 
       {isExpanded && (
         <div className="py-8 px-0 border-t border-white/15 space-y-8 animate-in fade-in slide-in-from-top-2 duration-300">
+          {/* Quick Summary */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-white/50">
+                Final Total
+              </p>
+              <p className="text-2xl font-bold text-blue-200 mt-1">
+                {finalTotal.toFixed(1)} / 100
+              </p>
+              <p className="text-xs text-white/50 mt-1">Overall performance</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-white/50">
+                Internal
+              </p>
+              <p className="text-2xl font-bold text-emerald-200 mt-1">
+                {scaledMarks.scaledInternal.toFixed(1)} / 75
+              </p>
+              <p className="text-xs text-white/50 mt-1">CATs + Quizzes + FAT</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-white/50">
+                Lab
+              </p>
+              <p className="text-2xl font-bold text-purple-200 mt-1">
+                {scaledMarks.lab.toFixed(1)} / 25
+              </p>
+              <p className="text-xs text-white/50 mt-1">Scaled lab score</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-white/50">
+                vs Class Avg
+              </p>
+              <p
+                className={`text-2xl font-bold mt-1 ${
+                  deltaVsClass === null ? "text-white/40"
+                  : deltaVsClass >= 0 ? "text-emerald-300"
+                  : "text-red-300"
+                }`}
+              >
+                {deltaVsClass === null ?
+                  "—"
+                : `${deltaVsClass >= 0 ? "+" : ""}${deltaVsClass.toFixed(1)}`}
+              </p>
+              <p className="text-xs text-white/50 mt-1">
+                Requires class average input
+              </p>
+            </div>
+          </div>
+
           {/* Original Marks */}
           <div>
             <h4 className="text-lg font-bold text-white mb-6">
               Assessment Marks
             </h4>
+            <p className="text-sm text-white/60 mb-4">
+              Enter raw marks for each assessment (decimals allowed). We scale
+              them automatically.
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {ASSESSMENT_COMPONENTS.map(({ key, label, max }) => (
                 <div key={key}>
@@ -137,9 +192,11 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
                     type="number"
                     min="0"
                     max={max}
-                    step="0.5"
+                    step="any"
+                    inputMode="decimal"
                     value={marks[key] === null ? "" : marks[key]}
                     onChange={(e) => handleMarkChange(key, e.target.value)}
+                    onWheel={(e) => e.currentTarget.blur()}
                     className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15]"
                     placeholder={`Out of ${max}`}
                   />
@@ -170,13 +227,15 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
                         type="number"
                         min="0"
                         max={max}
-                        step="0.5"
+                        step="any"
+                        inputMode="decimal"
                         value={
                           classAverage[key] === null ? "" : classAverage[key]
                         }
                         onChange={(e) =>
                           handleClassAverageChange(key, e.target.value)
                         }
+                        onWheel={(e) => e.currentTarget.blur()}
                         className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15]"
                         placeholder={`Class average`}
                       />

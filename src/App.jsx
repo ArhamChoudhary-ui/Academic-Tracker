@@ -9,18 +9,16 @@ import {
   Gamepad2,
 } from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
-import Dashboard from "./components/Dashboard";
 import Charts from "./components/Charts";
-import StudyTracker from "./components/StudyTracker";
-import StudyTimer from "./components/StudyTimer";
-import StudyCalendar from "./components/StudyCalendar";
 import SubjectPlanner from "./components/SubjectPlanner";
 import SyllabusPdfHub from "./components/SyllabusPdfHub";
-import AiStudyAssistant from "./components/AiStudyAssistant";
-import ExamQuestionGenerator from "./components/ExamQuestionGenerator";
 import ReportView from "./components/ReportView";
 import SplashScreen from "./components/SplashScreen";
 import LoadingScreen from "./components/LoadingScreen";
+import BottomNavigation from "./components/BottomNavigation";
+import CloudSettings from "./components/CloudSettings";
+import { CloudSyncProvider } from "./contexts/CloudSyncContext";
+import { useResponsive } from "./hooks/useResponsive";
 
 // Lazy load Tetris game
 const TetrisGame = lazy(() => import("./components/TetrisGame"));
@@ -43,6 +41,10 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showTetris, setShowTetris] = useState(false);
+  const [showCloudSettings, setShowCloudSettings] = useState(false);
+
+  // Responsive hook
+  const { isMobile, screenWidth } = useResponsive();
 
   useEffect(() => {
     const savedData = loadFromStorage();
@@ -146,18 +148,7 @@ function App() {
               </div>
 
               <nav className="flex gap-8 border-t border-white/10 overflow-x-auto -mx-6 px-6 sm:-mx-8 sm:px-8">
-                {[
-                  "subjects",
-                  "dashboard",
-                  "charts",
-                  "study",
-                  "timer",
-                  "calendar",
-                  "planner",
-                  "syllabus",
-                  "ai-assistant",
-                  "exam-questions",
-                ].map((tab) => (
+                {["subjects", "charts", "planner", "syllabus"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -167,18 +158,16 @@ function App() {
                       : "border-transparent text-white/60 hover:text-white"
                     }`}
                   >
-                    {tab === "ai-assistant" ?
-                      "AI Assistant"
-                    : tab === "exam-questions" ?
-                      "Exam Questions"
-                    : tab}
+                    {tab}
                   </button>
                 ))}
               </nav>
             </div>
           </header>
 
-          <main className="max-w-6xl mx-auto px-6 sm:px-8 py-12">
+          <main
+            className={`max-w-6xl mx-auto px-6 sm:px-8 py-12 ${isMobile ? "pb-32" : "pb-12"}`}
+          >
             {activeTab === "subjects" && (
               <div className="space-y-8">
                 <div>
@@ -199,9 +188,6 @@ function App() {
                 </div>
               </div>
             )}
-            {activeTab === "dashboard" && (
-              <Dashboard subjectsData={subjectsData} />
-            )}
             {activeTab === "charts" && (
               <div className="space-y-8">
                 <div>
@@ -215,14 +201,17 @@ function App() {
                 <Charts subjectsData={subjectsData} />
               </div>
             )}
-            {activeTab === "study" && <StudyTracker />}
-            {activeTab === "timer" && <StudyTimer />}
-            {activeTab === "calendar" && <StudyCalendar />}
             {activeTab === "planner" && <SubjectPlanner />}
             {activeTab === "syllabus" && <SyllabusPdfHub />}
-            {activeTab === "ai-assistant" && <AiStudyAssistant />}
-            {activeTab === "exam-questions" && <ExamQuestionGenerator />}
           </main>
+
+          {/* Bottom Navigation for Mobile */}
+          {isMobile && (
+            <BottomNavigation
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
+          )}
 
           {showReport && subjectsData && (
             <ReportView
@@ -243,6 +232,14 @@ function App() {
                     <X size={24} />
                   </button>
                 </div>
+                <div className="border-t border-white/20"></div>
+
+                {/* Cloud Settings Section */}
+                <CloudSettings
+                  onClose={() => setShowSettings(false)}
+                  subjectsData={subjectsData}
+                />
+
                 <div className="border-t border-white/20"></div>
                 <div>
                   <h3 className="text-sm font-semibold text-red-200 mb-3">
@@ -288,4 +285,10 @@ function App() {
   );
 }
 
-export default App;
+export default function AppWithProviders() {
+  return (
+    <CloudSyncProvider>
+      <App />
+    </CloudSyncProvider>
+  );
+}

@@ -22,11 +22,17 @@ const Charts = ({ subjectsData, reportMode = false }) => {
   const finalTotalsData = Object.entries(subjectsData).map(
     ([subject, data]) => {
       const scaledMarks = getScaledMarks(data.marks);
+      const hasClassAvg = Object.values(data.classAverage || {}).some(
+        (value) => value !== null && value !== undefined && value !== "",
+      );
+      const classScaledMarks =
+        hasClassAvg ? getScaledMarks(data.classAverage) : null;
       return {
         subject:
           subject.length > 12 ? subject.substring(0, 12) + "..." : subject,
         fullSubject: subject,
         "Final Total": scaledMarks.finalTotal,
+        "Class Avg": classScaledMarks?.finalTotal ?? null,
         Internal: scaledMarks.scaledInternal,
         Lab: scaledMarks.lab,
       };
@@ -55,7 +61,10 @@ const Charts = ({ subjectsData, reportMode = false }) => {
           </p>
           {payload.map((entry, index) => (
             <p key={index} style={{ color: entry.color }} className="text-xs">
-              {entry.name}: {entry.value.toFixed(2)}
+              {entry.name}:{" "}
+              {Number.isFinite(Number(entry.value)) ?
+                Number(entry.value).toFixed(2)
+              : "N/A"}
             </p>
           ))}
         </div>
@@ -89,6 +98,7 @@ const Charts = ({ subjectsData, reportMode = false }) => {
             <Tooltip content={<CustomTooltip />} />
             <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
             <Bar dataKey="Final Total" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="Class Avg" fill="#F59E0B" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -220,6 +230,15 @@ const Charts = ({ subjectsData, reportMode = false }) => {
               strokeWidth={3}
               dot={{ fill: "#8B5CF6", r: 6 }}
               activeDot={{ r: 8 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="Class Avg"
+              stroke="#F59E0B"
+              strokeWidth={3}
+              strokeDasharray="6 6"
+              dot={{ fill: "#F59E0B", r: 5 }}
+              activeDot={{ r: 7 }}
             />
           </LineChart>
         </ResponsiveContainer>
