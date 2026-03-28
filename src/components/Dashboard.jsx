@@ -4,8 +4,6 @@ import {
   getGrade,
   calculateGPA,
   calculateConsistencyScore,
-  getConsistencyLabel,
-  getConsistencyColor,
 } from "../utils/calculations";
 import { SUBJECTS } from "../utils/data";
 
@@ -47,12 +45,6 @@ const Dashboard = ({ subjectsData }) => {
         .filter((s) => s.percentage > 0)
         .reduce((sum, s) => sum + s.gpa, 0) / validPercentages.length
     : 0;
-
-  const clampedOverall = Math.min(Math.max(overallPercentage, 0), 100);
-  const ringRadius = 18;
-  const ringCircumference = 2 * Math.PI * ringRadius;
-  const ringOffset =
-    ringCircumference - (clampedOverall / 100) * ringCircumference;
 
   const completedSubjects = subjectStats.filter((s) => s.percentage > 0);
   const bestSubject =

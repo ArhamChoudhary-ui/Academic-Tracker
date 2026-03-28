@@ -266,9 +266,8 @@ export default function GoalCalculator({ subjectsData, onClose }) {
                         scalingInfo = "Scaled to 40% (out of 100)";
                       } else if (rec.component === "LAB") {
                         scaledContribution =
-                          (rec.requiredRaw / 100) *
-                          getSubjectWeightage(selectedSubject).lab;
-                        scalingInfo = `Scaled to ${getSubjectWeightage(selectedSubject).lab}% (out of 100)`;
+                          (rec.requiredRaw / 100) * weightage.lab;
+                        scalingInfo = `Scaled to ${weightage.lab}% (out of 100)`;
                       } else {
                         // Quiz
                         scaledContribution = rec.requiredRaw;
@@ -330,8 +329,8 @@ export default function GoalCalculator({ subjectsData, onClose }) {
                 <h4 className="font-semibold text-white mb-1">Pro Tip</h4>
                 <p className="text-sm text-white/70">
                   Focus on high-weightage assessments like FAT (40 marks) and
-                  LAB ({getSubjectWeightage(selectedSubject).lab} marks) to
-                  maximize your score efficiently.
+                  LAB ({weightage.lab} marks) to maximize your score
+                  efficiently.
                 </p>
               </div>
             </div>

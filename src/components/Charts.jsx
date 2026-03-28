@@ -18,7 +18,7 @@ import {
 } from "recharts";
 import { getScaledMarks } from "../utils/calculations";
 
-const Charts = ({ subjectsData, reportMode = false }) => {
+const Charts = ({ subjectsData }) => {
   const finalTotalsData = Object.entries(subjectsData).map(
     ([subject, data]) => {
       const scaledMarks = getScaledMarks(data.marks, subject);
