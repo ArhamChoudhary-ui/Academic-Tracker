@@ -7,6 +7,7 @@ import {
   X,
   FileText,
   Gamepad2,
+  Target,
 } from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
 import Charts from "./components/Charts";
@@ -17,6 +18,7 @@ import SplashScreen from "./components/SplashScreen";
 import LoadingScreen from "./components/LoadingScreen";
 import BottomNavigation from "./components/BottomNavigation";
 import CloudSettings from "./components/CloudSettings";
+import GoalCalculator from "./components/GoalCalculator";
 import { CloudSyncProvider } from "./contexts/CloudSyncContext";
 import { useResponsive } from "./hooks/useResponsive";
 
@@ -41,6 +43,7 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showTetris, setShowTetris] = useState(false);
+  const [showGoalCalc, setShowGoalCalc] = useState(false);
   const [showCloudSettings, setShowCloudSettings] = useState(false);
 
   // Responsive hook
@@ -117,6 +120,13 @@ function App() {
                 </h1>
                 <div className="flex items-center gap-6">
                   <button
+                    onClick={() => setShowGoalCalc(true)}
+                    className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                    title="Goal Calculator"
+                  >
+                    <Target size={20} />
+                  </button>
+                  <button
                     onClick={() => setShowTetris(true)}
                     className="text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                     title="Break Mode"
@@ -169,14 +179,17 @@ function App() {
             className={`max-w-6xl mx-auto px-6 sm:px-8 py-12 ${isMobile ? "pb-32" : "pb-12"}`}
           >
             {activeTab === "subjects" && (
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-3xl font-bold mb-2">My Subjects</h2>
-                  <p className="text-white/60">
+              <div className="space-y-10">
+                <div className="space-y-3">
+                  <h2 className="text-4xl font-bold tracking-tight">
+                    My Subjects
+                  </h2>
+                  <div className="h-px w-full bg-white/10" />
+                  <p className="text-sm text-white/60">
                     {SUBJECTS.length} subjects enrolled
                   </p>
                 </div>
-                <div className="space-y-0.5">
+                <div className="space-y-3">
                   {SUBJECTS.map((subject) => (
                     <SubjectCard
                       key={subject}
@@ -189,12 +202,13 @@ function App() {
               </div>
             )}
             {activeTab === "charts" && (
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-3xl font-bold mb-2">
+              <div className="space-y-10">
+                <div className="space-y-3">
+                  <h2 className="text-4xl font-bold tracking-tight">
                     Performance Charts
                   </h2>
-                  <p className="text-white/60">
+                  <div className="h-px w-full bg-white/10" />
+                  <p className="text-sm text-white/60">
                     Visual breakdown of your marks
                   </p>
                 </div>
@@ -217,6 +231,13 @@ function App() {
             <ReportView
               subjectsData={subjectsData}
               onClose={() => setShowReport(false)}
+            />
+          )}
+
+          {showGoalCalc && subjectsData && (
+            <GoalCalculator
+              subjectsData={subjectsData}
+              onClose={() => setShowGoalCalc(false)}
             />
           )}
 

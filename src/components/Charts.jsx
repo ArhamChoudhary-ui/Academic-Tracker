@@ -21,12 +21,12 @@ import { getScaledMarks } from "../utils/calculations";
 const Charts = ({ subjectsData, reportMode = false }) => {
   const finalTotalsData = Object.entries(subjectsData).map(
     ([subject, data]) => {
-      const scaledMarks = getScaledMarks(data.marks);
+      const scaledMarks = getScaledMarks(data.marks, subject);
       const hasClassAvg = Object.values(data.classAverage || {}).some(
         (value) => value !== null && value !== undefined && value !== "",
       );
       const classScaledMarks =
-        hasClassAvg ? getScaledMarks(data.classAverage) : null;
+        hasClassAvg ? getScaledMarks(data.classAverage, subject) : null;
       return {
         subject:
           subject.length > 12 ? subject.substring(0, 12) + "..." : subject,
@@ -39,7 +39,7 @@ const Charts = ({ subjectsData, reportMode = false }) => {
     },
   );
   const radarData = Object.entries(subjectsData).map(([subject, data]) => {
-    const scaledMarks = getScaledMarks(data.marks);
+    const scaledMarks = getScaledMarks(data.marks, subject);
     return {
       subject: subject.length > 10 ? subject.substring(0, 10) + "..." : subject,
       fullSubject: subject,
@@ -49,7 +49,10 @@ const Charts = ({ subjectsData, reportMode = false }) => {
         ((scaledMarks.quiz1 + scaledMarks.quiz2 + scaledMarks.quiz3) / 30) *
         100,
       FAT: (scaledMarks.fat / 40) * 100,
-      LAB: (scaledMarks.lab / 25) * 100,
+      LAB:
+        scaledMarks.labMax > 0 ?
+          (scaledMarks.lab / scaledMarks.labMax) * 100
+        : 0,
     };
   });
   const CustomTooltip = ({ active, payload, label }) => {
@@ -105,7 +108,7 @@ const Charts = ({ subjectsData, reportMode = false }) => {
 
       <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">
         <h3 className="text-lg font-semibold text-white mb-6">
-          Internal (75) vs Lab (25) Breakdown
+          Internal vs Lab Breakdown
         </h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={finalTotalsData}>

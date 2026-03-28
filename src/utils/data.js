@@ -6,6 +6,23 @@ export const SUBJECTS = [
   "Chemistry",
   "English",
 ];
+
+export const DEFAULT_WEIGHTAGE = {
+  internal: 75,
+  lab: 25,
+};
+
+export const SUBJECT_WEIGHTAGE = {
+  OOPS: {
+    internal: 50,
+    lab: 50,
+  },
+};
+
+export const getSubjectWeightage = (subject) => {
+  return SUBJECT_WEIGHTAGE[subject] || DEFAULT_WEIGHTAGE;
+};
+
 export const ASSESSMENT_COMPONENTS = [
   { key: "cat1", label: "CAT-1", max: 50, scaledMax: 15 },
   { key: "cat2", label: "CAT-2", max: 50, scaledMax: 15 },
@@ -16,8 +33,8 @@ export const ASSESSMENT_COMPONENTS = [
   { key: "lab", label: "LAB", max: 100, scaledMax: 25 },
 ];
 export const MAX_MARKS = {
-  internal: 75, // Scaled internal total
-  lab: 25, // Scaled lab
+  internal: DEFAULT_WEIGHTAGE.internal, // Default scaled internal total
+  lab: DEFAULT_WEIGHTAGE.lab, // Default scaled lab
   final: 100, // Final total (internal + lab)
 };
 export const createEmptyMarks = () => ({

@@ -1,3 +1,5 @@
+import { getSubjectWeightage } from "./data";
+
 export const scaleCATMarks = (catMarks) => {
   if (catMarks === null || catMarks === undefined) return 0;
   return (catMarks / 50) * 15;
@@ -8,9 +10,10 @@ export const scaleFATMarks = (fatMarks) => {
   return (fatMarks / 100) * 40;
 };
 
-export const scaleLABMarks = (labMarks) => {
+export const scaleLABMarks = (labMarks, subject) => {
   if (labMarks === null || labMarks === undefined) return 0;
-  return (labMarks / 100) * 25;
+  const { lab } = getSubjectWeightage(subject);
+  return (labMarks / 100) * lab;
 };
 
 export const calculateUnscaledInternal = (marks) => {
@@ -23,18 +26,21 @@ export const calculateUnscaledInternal = (marks) => {
   return scaledCat1 + scaledCat2 + quiz1 + quiz2 + quiz3 + scaledFat;
 };
 
-export const calculateScaledInternal = (marks) => {
+export const calculateScaledInternal = (marks, subject) => {
   const unscaledInternal = calculateUnscaledInternal(marks);
-  return (unscaledInternal / 100) * 75;
+  const { internal } = getSubjectWeightage(subject);
+  return (unscaledInternal / 100) * internal;
 };
 
-export const calculateFinalTotal = (marks) => {
-  const scaledInternal = calculateScaledInternal(marks);
-  const scaledLab = scaleLABMarks(marks.lab);
+export const calculateFinalTotal = (marks, subject) => {
+  const scaledInternal = calculateScaledInternal(marks, subject);
+  const scaledLab = scaleLABMarks(marks.lab, subject);
   return scaledInternal + scaledLab;
 };
 
-export const getScaledMarks = (marks) => {
+export const getScaledMarks = (marks, subject) => {
+  const weightage = getSubjectWeightage(subject);
+
   if (!marks)
     return {
       cat1: 0,
@@ -46,6 +52,8 @@ export const getScaledMarks = (marks) => {
       lab: 0,
       scaledInternal: 0,
       finalTotal: 0,
+      internalMax: weightage.internal,
+      labMax: weightage.lab,
     };
 
   const cat1 = scaleCATMarks(marks.cat1);
@@ -54,9 +62,9 @@ export const getScaledMarks = (marks) => {
   const quiz2 = marks.quiz2 || 0;
   const quiz3 = marks.quiz3 || 0;
   const fat = scaleFATMarks(marks.fat);
-  const lab = scaleLABMarks(marks.lab);
-  const scaledInternal = calculateScaledInternal(marks);
-  const finalTotal = calculateFinalTotal(marks);
+  const lab = scaleLABMarks(marks.lab, subject);
+  const scaledInternal = calculateScaledInternal(marks, subject);
+  const finalTotal = calculateFinalTotal(marks, subject);
 
   return {
     cat1,
@@ -68,6 +76,8 @@ export const getScaledMarks = (marks) => {
     lab,
     scaledInternal,
     finalTotal,
+    internalMax: weightage.internal,
+    labMax: weightage.lab,
   };
 };
 

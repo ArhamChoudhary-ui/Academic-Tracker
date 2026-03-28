@@ -32,7 +32,7 @@ const ReportView = ({ subjectsData, onClose }) => {
     SUBJECTS.forEach((subject) => {
       const marks = subjectsData[subject]?.marks;
       if (marks) {
-        const scaled = getScaledMarks(marks);
+        const scaled = getScaledMarks(marks, subject);
         totalFinal += scaled.finalTotal || 0;
         subjectCount += 1;
 
@@ -137,7 +137,7 @@ const ReportView = ({ subjectsData, onClose }) => {
             <div className="space-y-3">
               {SUBJECTS.map((subject) => {
                 const marks = subjectsData[subject]?.marks;
-                const scaled = getScaledMarks(marks);
+                const scaled = getScaledMarks(marks, subject);
                 const percentage = scaled.finalTotal;
                 const grade = getGrade(percentage);
                 const gpa = calculateGPA(percentage);

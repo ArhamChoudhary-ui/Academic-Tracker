@@ -12,7 +12,7 @@ import { SUBJECTS } from "../utils/data";
 const Dashboard = ({ subjectsData }) => {
   const subjectStats = SUBJECTS.map((subject) => {
     const data = subjectsData[subject];
-    const scaledMarks = getScaledMarks(data.marks);
+    const scaledMarks = getScaledMarks(data.marks, subject);
     const finalTotal = scaledMarks.finalTotal;
     const percentage = finalTotal;
 
@@ -28,6 +28,8 @@ const Dashboard = ({ subjectsData }) => {
       gpa: calculateGPA(percentage),
       scaledInternal: scaledMarks.scaledInternal,
       lab: scaledMarks.lab,
+      internalMax: scaledMarks.internalMax,
+      labMax: scaledMarks.labMax,
       consistency,
     };
   });
@@ -173,8 +175,12 @@ const Dashboard = ({ subjectsData }) => {
                 </div>
               </div>
               <div className="flex gap-6 text-xs text-white/60">
-                <div>Internal: {stat.scaledInternal.toFixed(1)}/75</div>
-                <div>Lab: {stat.lab.toFixed(1)}/25</div>
+                <div>
+                  Internal: {stat.scaledInternal.toFixed(1)}/{stat.internalMax}
+                </div>
+                <div>
+                  Lab: {stat.lab.toFixed(1)}/{stat.labMax}
+                </div>
               </div>
             </div>
           ))}
