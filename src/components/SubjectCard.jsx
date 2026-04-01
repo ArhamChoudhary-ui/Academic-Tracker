@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ASSESSMENT_COMPONENTS } from "../utils/data";
-import { getScaledMarks, predictFAT, getGrade } from "../utils/calculations";
+import {
+  getScaledMarks,
+  predictFAT,
+  getGrade,
+  calculateUnscaledInternal,
+} from "../utils/calculations";
 import { Check, ChevronDown, ChevronUp, Save } from "lucide-react";
 const SubjectCard = ({ subject, subjectData, onUpdate }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -34,6 +39,8 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
   };
   const scaledMarks = getScaledMarks(marks, subject);
   const classScaledMarks = getScaledMarks(classAverage, subject);
+  const studentUnscaledInternal = calculateUnscaledInternal(marks);
+  const classUnscaledInternal = calculateUnscaledInternal(classAverage);
   const prediction = predictFAT(marks);
   const finalTotal = scaledMarks.finalTotal;
   const percentage = finalTotal; // Already out of 100
@@ -43,6 +50,8 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
   );
   const deltaVsClass =
     hasClassAvg ? finalTotal - classScaledMarks.finalTotal : null;
+  const deltaInternalVsClass =
+    hasClassAvg ? studentUnscaledInternal - classUnscaledInternal : null;
 
   useEffect(() => {
     return () => {
@@ -174,20 +183,37 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
               <p className="text-xs uppercase tracking-wide text-white/50">
                 vs Class Avg
               </p>
-              <p
-                className={`text-2xl font-bold mt-1 ${
-                  deltaVsClass === null ? "text-white/40"
-                  : deltaVsClass >= 0 ? "text-emerald-300"
-                  : "text-red-300"
-                }`}
-              >
-                {deltaVsClass === null ?
-                  "—"
-                : `${deltaVsClass >= 0 ? "+" : ""}${deltaVsClass.toFixed(1)}`}
-              </p>
-              <p className="text-xs text-white/50 mt-1">
-                Requires class average input
-              </p>
+              <div className="mt-1">
+                <p
+                  className={`text-2xl font-bold ${
+                    deltaVsClass === null ? "text-white/40"
+                    : deltaVsClass >= 0 ? "text-emerald-300"
+                    : "text-red-300"
+                  }`}
+                >
+                  {deltaVsClass === null ?
+                    "—"
+                  : `${deltaVsClass >= 0 ? "+" : ""}${deltaVsClass.toFixed(1)}`}
+                </p>
+                <p className="text-xs text-white/50 mt-2">
+                  {deltaInternalVsClass === null ?
+                    "Pre-scale internal: —"
+                  : <span
+                      className={
+                        deltaInternalVsClass >= 0 ? "text-emerald-300" : (
+                          "text-red-300"
+                        )
+                      }
+                    >
+                      {`${deltaInternalVsClass >= 0 ? "+" : ""}${deltaInternalVsClass.toFixed(1)}`}{" "}
+                      pre-scale internal
+                    </span>
+                  }
+                </p>
+                <p className="text-xs text-white/50 mt-1">
+                  Requires class average input
+                </p>
+              </div>
             </div>
           </div>
 
