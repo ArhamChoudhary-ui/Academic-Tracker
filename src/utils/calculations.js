@@ -230,3 +230,65 @@ export const getConsistencyColor = (score) => {
   if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
   return "text-red-600 dark:text-red-400";
 };
+
+/**
+ * Compute combined subject standing from quiz and theory scores.
+ * - Converts raw scores to percentages using `calculatePercentage`.
+ * - Normalizes weights if requested (so they sum to 1).
+ * - Returns combined percentage, individual percentages, normalized weights,
+ *   and difference from class average (absolute and percent) when provided.
+ */
+export const computeSubjectStanding = ({
+  quizScore = 0,
+  quizMax = 100,
+  theoryScore = 0,
+  theoryMax = 100,
+  weights = { quiz: 0.3, theory: 0.75 },
+  classAverage = null,
+  normalize = true,
+} = {}) => {
+  const wQuiz = isValidNumber(weights.quiz) ? weights.quiz : 0;
+  const wTheory = isValidNumber(weights.theory) ? weights.theory : 0;
+
+  let normQuiz = wQuiz;
+  let normTheory = wTheory;
+  if (normalize) {
+    const sum = wQuiz + wTheory;
+    if (sum > 0) {
+      normQuiz = wQuiz / sum;
+      normTheory = wTheory / sum;
+    } else {
+      normQuiz = 0.5;
+      normTheory = 0.5;
+    }
+  }
+
+  const quizPct = calculatePercentage(quizScore, quizMax);
+  const theoryPct = calculatePercentage(theoryScore, theoryMax);
+
+  const combinedRaw = quizPct * normQuiz + theoryPct * normTheory;
+  const combined = clamp(parseFloat(combinedRaw.toFixed(2)), 0, 100);
+
+  let diff = null;
+  let diffPercent = null;
+  if (isValidNumber(classAverage) && classAverage !== null) {
+    diff = parseFloat((combined - classAverage).toFixed(2));
+    diffPercent =
+      classAverage !== 0 ?
+        parseFloat(((diff / classAverage) * 100).toFixed(2))
+      : null;
+  }
+
+  return {
+    combined,
+    quizPct: parseFloat(quizPct.toFixed(2)),
+    theoryPct: parseFloat(theoryPct.toFixed(2)),
+    weights: {
+      quiz: parseFloat(normQuiz.toFixed(4)),
+      theory: parseFloat(normTheory.toFixed(4)),
+    },
+    diff,
+    diffPercent,
+    above: diff !== null ? diff > 0 : null,
+  };
+};
