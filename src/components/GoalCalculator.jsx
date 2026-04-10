@@ -47,7 +47,7 @@ export default function GoalCalculator({ subjectsData, onClose }) {
       remainingComponents.push({ name: "QUIZ-3", max: 10, scaledMax: 10 });
     if (!hasFAT)
       remainingComponents.push({ name: "FAT", max: 100, scaledMax: 40 });
-    if (!hasLAB)
+    if (!hasLAB && weightage.lab > 0)
       remainingComponents.push({
         name: "LAB",
         max: 100,

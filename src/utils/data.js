@@ -22,6 +22,10 @@ export const DEFAULT_WEIGHTAGE = {
 };
 
 export const SUBJECT_WEIGHTAGE = {
+  "Discrete Mathematics": {
+    internal: 100,
+    lab: 0,
+  },
   OOPS: {
     internal: 50,
     lab: 50,

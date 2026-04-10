@@ -50,6 +50,10 @@ const SubjectCard = ({
   const finalTotal = scaledMarks.finalTotal;
   const percentage = finalTotal; // Already out of 100
   const grade = getGrade(percentage);
+  const hasLabComponent = scaledMarks.labMax > 0;
+  const visibleAssessmentComponents = ASSESSMENT_COMPONENTS.filter(
+    ({ key }) => hasLabComponent || key !== "lab",
+  );
   const hasClassAvg = Object.values(classAverage || {}).some(
     (value) => value !== null && value !== undefined && value !== "",
   );
@@ -155,7 +159,9 @@ const SubjectCard = ({
       {isExpanded && (
         <div className="py-8 px-0 border-t border-white/15 space-y-10 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 duration-300">
           {/* Quick Summary */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${hasLabComponent ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}
+          >
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs uppercase tracking-wide text-white/50">
                 Final Total
@@ -175,15 +181,17 @@ const SubjectCard = ({
               </p>
               <p className="text-xs text-white/50 mt-1">CATs + Quizzes + FAT</p>
             </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="text-xs uppercase tracking-wide text-white/50">
-                Lab
-              </p>
-              <p className="text-2xl font-bold text-purple-200 mt-1">
-                {scaledMarks.lab.toFixed(1)} / {scaledMarks.labMax}
-              </p>
-              <p className="text-xs text-white/50 mt-1">Scaled lab score</p>
-            </div>
+            {hasLabComponent && (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-wide text-white/50">
+                  Lab
+                </p>
+                <p className="text-2xl font-bold text-purple-200 mt-1">
+                  {scaledMarks.lab.toFixed(1)} / {scaledMarks.labMax}
+                </p>
+                <p className="text-xs text-white/50 mt-1">Scaled lab score</p>
+              </div>
+            )}
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs uppercase tracking-wide text-white/50">
                 vs Class Avg
@@ -235,7 +243,7 @@ const SubjectCard = ({
               them automatically.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {ASSESSMENT_COMPONENTS.map(({ key, label, max }) => (
+              {visibleAssessmentComponents.map(({ key, label, max }) => (
                 <div key={key}>
                   <label className="block text-sm font-semibold text-white/70 mb-3">
                     {label}
@@ -270,7 +278,7 @@ const SubjectCard = ({
             {showClassAverage && (
               <div className="mt-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {ASSESSMENT_COMPONENTS.map(({ key, label, max }) => (
+                  {visibleAssessmentComponents.map(({ key, label, max }) => (
                     <div key={key}>
                       <label className="block text-sm font-semibold text-white/70 mb-3">
                         {label} (Class Avg)
@@ -325,12 +333,14 @@ const SubjectCard = ({
                   {scaledMarks.fat.toFixed(2)} / 40
                 </span>
               </div>
-              <div className="flex items-center justify-between py-3 border-b border-white/10">
-                <span className="text-white/70">LAB Scaled</span>
-                <span className="text-lg font-semibold text-white">
-                  {scaledMarks.lab.toFixed(2)} / {scaledMarks.labMax}
-                </span>
-              </div>
+              {hasLabComponent && (
+                <div className="flex items-center justify-between py-3 border-b border-white/10">
+                  <span className="text-white/70">LAB Scaled</span>
+                  <span className="text-lg font-semibold text-white">
+                    {scaledMarks.lab.toFixed(2)} / {scaledMarks.labMax}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center justify-between py-4 border-b border-white/10">
                 <span className="font-semibold text-white">Internal Total</span>
                 <span className="text-xl font-bold text-blue-300">

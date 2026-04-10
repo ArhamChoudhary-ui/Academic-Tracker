@@ -174,9 +174,11 @@ const Dashboard = ({ subjectsData }) => {
                 <div>
                   Internal: {stat.scaledInternal.toFixed(1)}/{stat.internalMax}
                 </div>
-                <div>
-                  Lab: {stat.lab.toFixed(1)}/{stat.labMax}
-                </div>
+                {stat.labMax > 0 ?
+                  <div>
+                    Lab: {stat.lab.toFixed(1)}/{stat.labMax}
+                  </div>
+                : <div>No lab component</div>}
               </div>
             </div>
           ))}
