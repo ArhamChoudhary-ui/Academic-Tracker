@@ -40,6 +40,7 @@ import {
 
 function App() {
   const [subjectsData, setSubjectsData] = useState(null);
+  const [expandedSubject, setExpandedSubject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [introStage, setIntroStage] = useState("splash");
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -193,14 +194,28 @@ function App() {
                     {SUBJECTS.length} subjects enrolled
                   </p>
                 </div>
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto">
                   {SUBJECTS.map((subject) => (
-                    <SubjectCard
+                    <div
                       key={subject}
-                      subject={subject}
-                      subjectData={subjectsData[subject]}
-                      onUpdate={handleSubjectUpdate}
-                    />
+                      className={
+                        expandedSubject === subject ?
+                          "md:col-span-2 xl:col-span-3"
+                        : ""
+                      }
+                    >
+                      <SubjectCard
+                        subject={subject}
+                        subjectData={subjectsData[subject]}
+                        onUpdate={handleSubjectUpdate}
+                        isExpanded={expandedSubject === subject}
+                        onToggle={() =>
+                          setExpandedSubject((prev) =>
+                            prev === subject ? null : subject,
+                          )
+                        }
+                      />
+                    </div>
                   ))}
                 </div>
               </div>

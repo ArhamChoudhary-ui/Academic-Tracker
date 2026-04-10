@@ -7,8 +7,13 @@ import {
   calculateUnscaledInternal,
 } from "../utils/calculations";
 import { Check, ChevronDown, ChevronUp, Save } from "lucide-react";
-const SubjectCard = ({ subject, subjectData, onUpdate }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const SubjectCard = ({
+  subject,
+  subjectData,
+  onUpdate,
+  isExpanded = false,
+  onToggle,
+}) => {
   const [marks, setMarks] = useState(subjectData.marks);
   const [classAverage, setClassAverage] = useState(
     subjectData.classAverage || {},
@@ -70,11 +75,11 @@ const SubjectCard = ({ subject, subjectData, onUpdate }) => {
       }`}
     >
       <div
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={onToggle}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            setIsExpanded(!isExpanded);
+            onToggle?.();
           }
         }}
         role="button"
