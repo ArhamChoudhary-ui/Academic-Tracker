@@ -1,7 +1,10 @@
 export const SUBJECTS = [
   "Probability and Statistics",
+  "Discrete Maths",
   "DSA",
+  "Physics",
   "OOPS",
+  "OS",
   "Software Engineering",
   "Chemistry",
   "English",

@@ -51,7 +51,34 @@ function App() {
 
   useEffect(() => {
     const savedData = loadFromStorage();
-    const dataToUse = savedData || createEmptySubjectData();
+    const defaultData = createEmptySubjectData();
+    const dataToUse =
+      savedData ?
+        Object.keys(defaultData).reduce(
+          (acc, subject) => {
+            const defaultSubjectData = defaultData[subject];
+            const savedSubjectData = savedData[subject] || {};
+
+            acc[subject] = {
+              ...defaultSubjectData,
+              ...savedSubjectData,
+              marks: {
+                ...defaultSubjectData.marks,
+                ...(savedSubjectData.marks || {}),
+              },
+              classAverage: {
+                ...defaultSubjectData.classAverage,
+                ...(savedSubjectData.classAverage || {}),
+              },
+              notes: savedSubjectData.notes || "",
+            };
+
+            return acc;
+          },
+          { ...savedData },
+        )
+      : defaultData;
+
     setSubjectsData(dataToUse);
     setIsLoading(false);
   }, []);
