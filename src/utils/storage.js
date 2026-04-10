@@ -1,3 +1,9 @@
+import {
+  SUBJECTS,
+  createEmptyMarks,
+  mergeWithDefaultSubjectData,
+} from "./data";
+
 const STORAGE_KEY = "academic_tracker_data";
 const THEME_KEY = "academic_tracker_theme";
 const WEIGHTS_KEY = "academic_tracker_weights";
@@ -13,7 +19,7 @@ export const saveToStorage = (data) => {
 export const loadFromStorage = () => {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
+    return data ? mergeWithDefaultSubjectData(JSON.parse(data)) : null;
   } catch (error) {
     console.error("Error loading from localStorage:", error);
     return null;
@@ -61,6 +67,7 @@ export const clearStorage = () => {
   }
 };
 export const exportToCSV = (data) => {
+  const normalizedData = mergeWithDefaultSubjectData(data);
   const headers = [
     "Subject",
     "CAT-1",
@@ -74,8 +81,9 @@ export const exportToCSV = (data) => {
     "Total",
   ];
   const rows = [];
-  for (const [subject, subjectData] of Object.entries(data)) {
-    const marks = subjectData.marks;
+  for (const subject of SUBJECTS) {
+    const subjectData = normalizedData[subject] || {};
+    const marks = subjectData.marks || createEmptyMarks();
     const total = Object.values(marks).reduce((sum, val) => {
       return (
         sum +

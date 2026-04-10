@@ -19,7 +19,7 @@ The Academic Tracker consists of three main sections:
 ### First Time Setup
 
 1. **Open the application** in your browser at `http://localhost:3000`
-2. You'll see 6 subject cards (initially collapsed)
+2. You'll see 9 subject cards (initially collapsed)
 3. All subjects start with empty marks
 4. Data automatically saves to your browser
 
@@ -103,7 +103,7 @@ Click **"Save Changes"** button (two locations):
 
 ### Overview Cards
 
-The dashboard displays 6 key metric cards:
+The dashboard displays key metric cards:
 
 #### 1. Overall Average
 
@@ -125,7 +125,7 @@ Cumulative Grade Point Average
 #### 3. Subjects
 
 ```
-Shows: 6
+Shows: 9
 ```
 
 Total number of enrolled subjects

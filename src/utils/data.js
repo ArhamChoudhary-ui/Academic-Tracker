@@ -1,14 +1,20 @@
 export const SUBJECTS = [
   "Probability and Statistics",
-  "Discrete Maths",
+  "Discrete Mathematics",
   "DSA",
   "Physics",
   "OOPS",
-  "OS",
+  "Operating Systems (OS)",
   "Software Engineering",
   "Chemistry",
   "English",
 ];
+
+const SUBJECT_ALIASES = {
+  "Discrete Maths": "Discrete Mathematics",
+  OS: "Operating Systems (OS)",
+  "Operating Systems": "Operating Systems (OS)",
+};
 
 export const DEFAULT_WEIGHTAGE = {
   internal: 75,
@@ -68,4 +74,47 @@ export const createEmptySubjectData = () => {
     };
   });
   return data;
+};
+
+export const mergeWithDefaultSubjectData = (savedData) => {
+  const defaultData = createEmptySubjectData();
+
+  if (!savedData || typeof savedData !== "object") {
+    return defaultData;
+  }
+
+  const normalizedSavedData = { ...savedData };
+
+  Object.entries(SUBJECT_ALIASES).forEach(([legacyName, canonicalName]) => {
+    if (
+      normalizedSavedData[legacyName] &&
+      !normalizedSavedData[canonicalName]
+    ) {
+      normalizedSavedData[canonicalName] = normalizedSavedData[legacyName];
+    }
+  });
+
+  return SUBJECTS.reduce((acc, subject) => {
+    const defaultSubjectData = defaultData[subject];
+    const savedSubjectData = normalizedSavedData[subject] || {};
+
+    acc[subject] = {
+      ...defaultSubjectData,
+      ...savedSubjectData,
+      marks: {
+        ...defaultSubjectData.marks,
+        ...(savedSubjectData.marks || {}),
+      },
+      classAverage: {
+        ...defaultSubjectData.classAverage,
+        ...(savedSubjectData.classAverage || {}),
+      },
+      notes:
+        typeof savedSubjectData.notes === "string" ?
+          savedSubjectData.notes
+        : "",
+    };
+
+    return acc;
+  }, {});
 };

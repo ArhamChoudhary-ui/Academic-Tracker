@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -19,6 +19,8 @@ import {
 import { getScaledMarks } from "../utils/calculations";
 
 const Charts = ({ subjectsData }) => {
+  const [selectedRadarIndex, setSelectedRadarIndex] = useState(0);
+
   const finalTotalsData = Object.entries(subjectsData).map(
     ([subject, data]) => {
       const scaledMarks = getScaledMarks(data.marks, subject);
@@ -55,6 +57,20 @@ const Charts = ({ subjectsData }) => {
         : 0,
     };
   });
+
+  useEffect(() => {
+    if (selectedRadarIndex > Math.max(0, radarData.length - 1)) {
+      setSelectedRadarIndex(0);
+    }
+  }, [radarData.length, selectedRadarIndex]);
+
+  const chartMinWidth = useMemo(
+    () => Math.max(720, finalTotalsData.length * 110),
+    [finalTotalsData.length],
+  );
+
+  const selectedRadarData = radarData[selectedRadarIndex] || null;
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -81,57 +97,77 @@ const Charts = ({ subjectsData }) => {
         <h3 className="text-lg font-semibold text-white mb-6">
           Final Totals (Out of 100)
         </h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={finalTotalsData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
-              opacity={0.2}
-            />
-            <XAxis
-              dataKey="subject"
-              stroke="rgba(255,255,255,0.5)"
-              style={{ fontSize: "12px" }}
-            />
-            <YAxis
-              stroke="rgba(255,255,255,0.5)"
-              style={{ fontSize: "12px" }}
-              domain={[0, 100]}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
-            <Bar dataKey="Final Total" fill="#3B82F6" radius={[8, 8, 0, 0]} />
-            <Bar dataKey="Class Avg" fill="#F59E0B" radius={[8, 8, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="w-full overflow-x-auto">
+          <div style={{ minWidth: `${chartMinWidth}px` }}>
+            <ResponsiveContainer width="100%" height={420}>
+              <BarChart data={finalTotalsData} margin={{ bottom: 70 }}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="rgba(255,255,255,0.1)"
+                  opacity={0.2}
+                />
+                <XAxis
+                  dataKey="subject"
+                  stroke="rgba(255,255,255,0.5)"
+                  style={{ fontSize: "12px" }}
+                  interval={0}
+                  angle={-25}
+                  textAnchor="end"
+                  height={72}
+                />
+                <YAxis
+                  stroke="rgba(255,255,255,0.5)"
+                  style={{ fontSize: "12px" }}
+                  domain={[0, 100]}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
+                <Bar
+                  dataKey="Final Total"
+                  fill="#3B82F6"
+                  radius={[8, 8, 0, 0]}
+                />
+                <Bar dataKey="Class Avg" fill="#F59E0B" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
       <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">
         <h3 className="text-lg font-semibold text-white mb-6">
           Internal vs Lab Breakdown
         </h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={finalTotalsData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
-              opacity={0.2}
-            />
-            <XAxis
-              dataKey="subject"
-              stroke="rgba(255,255,255,0.5)"
-              style={{ fontSize: "12px" }}
-            />
-            <YAxis
-              stroke="rgba(255,255,255,0.5)"
-              style={{ fontSize: "12px" }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
-            <Bar dataKey="Internal" fill="#3B82F6" radius={[8, 8, 0, 0]} />
-            <Bar dataKey="Lab" fill="#10B981" radius={[8, 8, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="w-full overflow-x-auto">
+          <div style={{ minWidth: `${chartMinWidth}px` }}>
+            <ResponsiveContainer width="100%" height={420}>
+              <BarChart data={finalTotalsData} margin={{ bottom: 70 }}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="rgba(255,255,255,0.1)"
+                  opacity={0.2}
+                />
+                <XAxis
+                  dataKey="subject"
+                  stroke="rgba(255,255,255,0.5)"
+                  style={{ fontSize: "12px" }}
+                  interval={0}
+                  angle={-25}
+                  textAnchor="end"
+                  height={72}
+                />
+                <YAxis
+                  stroke="rgba(255,255,255,0.5)"
+                  style={{ fontSize: "12px" }}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
+                <Bar dataKey="Internal" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="Lab" fill="#10B981" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
       <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">
@@ -139,7 +175,7 @@ const Charts = ({ subjectsData }) => {
           Component-wise Performance (Percentage)
         </h3>
         <ResponsiveContainer width="100%" height={500}>
-          <RadarChart data={radarData[0] ? [radarData[0]] : []}>
+          <RadarChart data={selectedRadarData ? [selectedRadarData] : []}>
             <PolarGrid stroke="rgba(255,255,255,0.1)" />
             <PolarAngleAxis
               dataKey="subject"
@@ -192,11 +228,15 @@ const Charts = ({ subjectsData }) => {
           </RadarChart>
         </ResponsiveContainer>
         <div className="mt-4 grid grid-cols-2 md:grid-cols-6 gap-4">
-          {radarData.slice(1).map((subject, index) => (
+          {radarData.map((subject, index) => (
             <button
               key={index}
-              className="text-xs p-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              onClick={() => {}}
+              className={`text-xs p-2 rounded transition-colors ${
+                selectedRadarIndex === index ?
+                  "bg-blue-500 text-white"
+                : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+              }`}
+              onClick={() => setSelectedRadarIndex(index)}
             >
               {subject.subject}
             </button>
@@ -207,44 +247,52 @@ const Charts = ({ subjectsData }) => {
         <h3 className="text-lg font-semibold text-white mb-6">
           Performance Comparison Across Subjects
         </h3>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={finalTotalsData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
-              opacity={0.2}
-            />
-            <XAxis
-              dataKey="subject"
-              stroke="rgba(255,255,255,0.5)"
-              style={{ fontSize: "12px" }}
-            />
-            <YAxis
-              stroke="rgba(255,255,255,0.5)"
-              style={{ fontSize: "12px" }}
-              domain={[0, 100]}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
-            <Line
-              type="monotone"
-              dataKey="Final Total"
-              stroke="#8B5CF6"
-              strokeWidth={3}
-              dot={{ fill: "#8B5CF6", r: 6 }}
-              activeDot={{ r: 8 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="Class Avg"
-              stroke="#F59E0B"
-              strokeWidth={3}
-              strokeDasharray="6 6"
-              dot={{ fill: "#F59E0B", r: 5 }}
-              activeDot={{ r: 7 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="w-full overflow-x-auto">
+          <div style={{ minWidth: `${chartMinWidth}px` }}>
+            <ResponsiveContainer width="100%" height={420}>
+              <LineChart data={finalTotalsData} margin={{ bottom: 70 }}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="rgba(255,255,255,0.1)"
+                  opacity={0.2}
+                />
+                <XAxis
+                  dataKey="subject"
+                  stroke="rgba(255,255,255,0.5)"
+                  style={{ fontSize: "12px" }}
+                  interval={0}
+                  angle={-25}
+                  textAnchor="end"
+                  height={72}
+                />
+                <YAxis
+                  stroke="rgba(255,255,255,0.5)"
+                  style={{ fontSize: "12px" }}
+                  domain={[0, 100]}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend wrapperStyle={{ color: "rgba(255,255,255,0.7)" }} />
+                <Line
+                  type="monotone"
+                  dataKey="Final Total"
+                  stroke="#8B5CF6"
+                  strokeWidth={3}
+                  dot={{ fill: "#8B5CF6", r: 6 }}
+                  activeDot={{ r: 8 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Class Avg"
+                  stroke="#F59E0B"
+                  strokeWidth={3}
+                  strokeDasharray="6 6"
+                  dot={{ fill: "#F59E0B", r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );

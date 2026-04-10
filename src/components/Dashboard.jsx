@@ -9,7 +9,11 @@ import { SUBJECTS } from "../utils/data";
 
 const Dashboard = ({ subjectsData }) => {
   const subjectStats = SUBJECTS.map((subject) => {
-    const data = subjectsData[subject];
+    const data = subjectsData?.[subject] || {
+      marks: {},
+      classAverage: {},
+      notes: "",
+    };
     const scaledMarks = getScaledMarks(data.marks, subject);
     const finalTotal = scaledMarks.finalTotal;
     const percentage = finalTotal;

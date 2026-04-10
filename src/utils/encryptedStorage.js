@@ -10,7 +10,11 @@ import {
   deleteEncryptedData,
 } from "./secureStorage.js";
 import { getEncryptionKey, getNonce } from "./authManager.js";
-import { encodeBase64 } from "./crypto.js";
+import {
+  SUBJECTS,
+  createEmptyMarks,
+  mergeWithDefaultSubjectData,
+} from "./data";
 
 const SUBJECT_DATA_KEY = "subject_data";
 const THEME_KEY = "user_theme"; // Non-sensitive
@@ -38,7 +42,7 @@ export const loadFromEncryptedStorage = async () => {
   try {
     const encryptionKey = getEncryptionKey();
     const data = await loadEncryptedData(SUBJECT_DATA_KEY, encryptionKey);
-    return data || null;
+    return data ? mergeWithDefaultSubjectData(data) : null;
   } catch (error) {
     console.error("Error loading from encrypted storage:", error);
     throw error;
@@ -117,6 +121,7 @@ export const clearAllEncryptedData = async () => {
  * Export to CSV (decrypted data only)
  */
 export const exportToCSV = async (data) => {
+  const normalizedData = mergeWithDefaultSubjectData(data);
   const headers = [
     "Subject",
     "CAT-1",
@@ -131,8 +136,9 @@ export const exportToCSV = async (data) => {
   ];
   const rows = [];
 
-  for (const [subject, subjectData] of Object.entries(data)) {
-    const marks = subjectData.marks;
+  for (const subject of SUBJECTS) {
+    const subjectData = normalizedData[subject] || {};
+    const marks = subjectData.marks || createEmptyMarks();
     const total = Object.values(marks).reduce((sum, val) => {
       return (
         sum +
@@ -189,7 +195,7 @@ export const saveToStorage = (data) => {
 export const loadFromStorage = () => {
   try {
     const data = localStorage.getItem("academic_tracker_data");
-    return data ? JSON.parse(data) : null;
+    return data ? mergeWithDefaultSubjectData(JSON.parse(data)) : null;
   } catch (error) {
     console.error("Error loading from localStorage:", error);
     return null;

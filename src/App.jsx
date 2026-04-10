@@ -24,7 +24,11 @@ import { useResponsive } from "./hooks/useResponsive";
 
 // Lazy load Tetris game
 const TetrisGame = lazy(() => import("./components/TetrisGame"));
-import { SUBJECTS, createEmptySubjectData } from "./utils/data";
+import {
+  SUBJECTS,
+  createEmptySubjectData,
+  mergeWithDefaultSubjectData,
+} from "./utils/data";
 import { clearAllStudySessions } from "./utils/study";
 import { clearAllTimerSessions } from "./utils/timerStorage";
 import {
@@ -51,34 +55,7 @@ function App() {
 
   useEffect(() => {
     const savedData = loadFromStorage();
-    const defaultData = createEmptySubjectData();
-    const dataToUse =
-      savedData ?
-        Object.keys(defaultData).reduce(
-          (acc, subject) => {
-            const defaultSubjectData = defaultData[subject];
-            const savedSubjectData = savedData[subject] || {};
-
-            acc[subject] = {
-              ...defaultSubjectData,
-              ...savedSubjectData,
-              marks: {
-                ...defaultSubjectData.marks,
-                ...(savedSubjectData.marks || {}),
-              },
-              classAverage: {
-                ...defaultSubjectData.classAverage,
-                ...(savedSubjectData.classAverage || {}),
-              },
-              notes: savedSubjectData.notes || "",
-            };
-
-            return acc;
-          },
-          { ...savedData },
-        )
-      : defaultData;
-
+    const dataToUse = mergeWithDefaultSubjectData(savedData);
     setSubjectsData(dataToUse);
     setIsLoading(false);
   }, []);
@@ -216,7 +193,7 @@ function App() {
                     {SUBJECTS.length} subjects enrolled
                   </p>
                 </div>
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                   {SUBJECTS.map((subject) => (
                     <SubjectCard
                       key={subject}

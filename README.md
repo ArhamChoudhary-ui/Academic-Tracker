@@ -10,7 +10,7 @@ A comprehensive web application for students to track, analyze, and predict thei
 
 ### 📊 Core Functionality
 
-- **Subject Management**: Track 6 subjects (Probability & Statistics, DSA, OOPS, Software Engineering, Chemistry, English)
+- **Subject Management**: Track 9 subjects (Probability and Statistics, Discrete Mathematics, DSA, Physics, OOPS, Operating Systems (OS), Software Engineering, Chemistry, English)
 - **Assessment Components**: CAT-1, CAT-2, QUIZ-1, QUIZ-2, QUIZ-3, INTERNALS (auto-calculated), FAT, LAB
 - **Auto-calculation**: Automatic computation of totals, averages, and internal marks
 - **Local Storage**: All data persists locally in your browser

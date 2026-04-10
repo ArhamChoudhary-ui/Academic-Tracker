@@ -549,7 +549,7 @@ import { clearAllTimerSessions } from "./utils/timerStorage";
 ✅ **Feature is working when:**
 
 1. "Timer" tab appears in navigation
-2. Dropdown shows all 6 subjects
+2. Dropdown shows all 9 subjects
 3. Timer displays 00:00:00
 4. Start button is clickable
 5. Timer updates every second
