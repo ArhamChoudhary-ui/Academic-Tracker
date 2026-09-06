@@ -1,0 +1,451 @@
+import React, { useEffect, useRef, useState } from "react";
+import { ASSESSMENT_COMPONENTS } from "../utils/data";
+import {
+  getScaledMarks,
+  predictFAT,
+  getGrade,
+  calculateUnscaledInternal,
+} from "../utils/calculations";
+import { Check, ChevronDown, ChevronUp, Save, Trash2 } from "lucide-react";
+const SubjectCard = ({
+  subject,
+  subjectData,
+  onUpdate,
+  onRemove,
+  isExpanded = false,
+  onToggle,
+}) => {
+  const [marks, setMarks] = useState(subjectData.marks);
+  const [classAverage, setClassAverage] = useState(
+    subjectData.classAverage || {},
+  );
+  const [notes, setNotes] = useState(subjectData.notes || "");
+  const [showPrediction, setShowPrediction] = useState(false);
+  const [showClassAverage, setShowClassAverage] = useState(false);
+  const [saveState, setSaveState] = useState("idle");
+  const saveTimeoutRef = useRef(null);
+  const handleMarkChange = (component, value) => {
+    const numValue = value === "" ? null : parseFloat(value);
+    const updatedMarks = { ...marks, [component]: numValue };
+    setMarks(updatedMarks);
+  };
+  const handleClassAverageChange = (component, value) => {
+    const numValue = value === "" ? null : parseFloat(value);
+    setClassAverage({ ...classAverage, [component]: numValue });
+  };
+  const handleSave = () => {
+    onUpdate(subject, { marks, classAverage, notes });
+    setSaveState("saved");
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      setSaveState("idle");
+    }, 1600);
+  };
+  const scaledMarks = getScaledMarks(marks, subject);
+  const classScaledMarks = getScaledMarks(classAverage, subject);
+  const studentUnscaledInternal = calculateUnscaledInternal(marks);
+  const classUnscaledInternal = calculateUnscaledInternal(classAverage);
+  const prediction = predictFAT(marks);
+  const finalTotal = scaledMarks.finalTotal;
+  const percentage = finalTotal; // Already out of 100
+  const grade = getGrade(percentage);
+  const hasLabComponent = scaledMarks.labMax > 0;
+  const visibleAssessmentComponents = ASSESSMENT_COMPONENTS.filter(
+    ({ key }) => hasLabComponent || key !== "lab",
+  );
+  const hasClassAvg = Object.values(classAverage || {}).some(
+    (value) => value !== null && value !== undefined && value !== "",
+  );
+  const deltaVsClass =
+    hasClassAvg ? finalTotal - classScaledMarks.finalTotal : null;
+  const deltaInternalVsClass =
+    hasClassAvg ? studentUnscaledInternal - classUnscaledInternal : null;
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div
+      className={`border-t border-white/10 transition-all duration-300 ${
+        isExpanded ?
+          "bg-black/15 backdrop-blur-sm -mx-6 px-6 py-2 rounded-xl border-white/15"
+        : "hover:bg-white/[0.04]"
+      }`}
+    >
+      <div
+        onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onToggle?.();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
+        className={`cursor-pointer py-6 px-0 flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent transition-all duration-300 ${
+          isExpanded ? "pb-4" : ""
+        }`}
+      >
+        <div className="flex-1">
+          <h3
+            className={`text-3xl font-bold mb-1 tracking-tight transition-all duration-300 ${
+              isExpanded ? "text-blue-100" : "text-white"
+            }`}
+          >
+            {subject}
+          </h3>
+          <p className="text-sm text-white/50">Tap to view and edit marks</p>
+          <div className="flex items-center gap-6">
+            <div
+              className={`text-sm transition-colors duration-300 ${
+                isExpanded ? "text-white/70" : "text-white/60"
+              }`}
+            >
+              Grade: <span className="font-semibold text-white">{grade}</span>
+            </div>
+            {deltaVsClass !== null && (
+              <div
+                className={`text-sm ${
+                  deltaVsClass >= 0 ? "text-emerald-300" : "text-red-300"
+                }`}
+              >
+                {deltaVsClass >= 0 ? "↑" : "↓"}{" "}
+                {Math.abs(deltaVsClass).toFixed(1)} vs class
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="text-right flex items-center gap-3">
+          <div
+            className={`transition-transform duration-300 ${
+              isExpanded ? "scale-105" : "scale-100"
+            }`}
+          >
+            <div className="text-5xl font-bold text-blue-200">
+              {percentage.toFixed(0)}%
+            </div>
+            <div className="text-xs text-white/50 mt-1">
+              {percentage >= 80 ?
+                "Excellent"
+              : percentage >= 60 ?
+                "Good"
+              : percentage >= 40 ?
+                "Fair"
+              : "Needs Work"}
+            </div>
+          </div>
+          {onRemove && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.confirm(`Remove "${subject}" from your dashboard?`)) {
+                  onRemove(subject);
+                }
+              }}
+              title="Remove subject"
+              className="p-2 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-400/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60"
+            >
+              <Trash2 size={18} />
+            </button>
+          )}
+          <div
+            className={`transition-all duration-300 ${
+              isExpanded ? "text-blue-300" : (
+                "text-white/40 group-hover:text-white/60"
+              )
+            }`}
+          >
+            {isExpanded ?
+              <ChevronUp size={24} />
+            : <ChevronDown size={24} />}
+          </div>
+        </div>
+      </div>
+
+      {isExpanded && (
+        <div className="py-8 px-0 border-t border-white/15 space-y-10 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 duration-300">
+          {/* Quick Summary */}
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 gap-3 ${hasLabComponent ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}
+          >
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-white/50">
+                Final Total
+              </p>
+              <p className="text-2xl font-bold text-blue-200 mt-1">
+                {finalTotal.toFixed(1)} / 100
+              </p>
+              <p className="text-xs text-white/50 mt-1">Overall performance</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-white/50">
+                Internal
+              </p>
+              <p className="text-2xl font-bold text-emerald-200 mt-1">
+                {scaledMarks.scaledInternal.toFixed(1)} /{" "}
+                {scaledMarks.internalMax}
+              </p>
+              <p className="text-xs text-white/50 mt-1">CATs + Quizzes + FAT</p>
+            </div>
+            {hasLabComponent && (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-wide text-white/50">
+                  Lab
+                </p>
+                <p className="text-2xl font-bold text-purple-200 mt-1">
+                  {scaledMarks.lab.toFixed(1)} / {scaledMarks.labMax}
+                </p>
+                <p className="text-xs text-white/50 mt-1">Scaled lab score</p>
+              </div>
+            )}
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-white/50">
+                vs Class Avg
+              </p>
+              <div className="mt-1">
+                <p
+                  className={`text-2xl font-bold ${
+                    deltaVsClass === null ? "text-white/40"
+                    : deltaVsClass >= 0 ? "text-emerald-300"
+                    : "text-red-300"
+                  }`}
+                >
+                  {deltaVsClass === null ?
+                    "—"
+                  : `${deltaVsClass >= 0 ? "+" : ""}${deltaVsClass.toFixed(1)}`}
+                </p>
+                <p className="text-xs text-white/50 mt-2">
+                  {deltaInternalVsClass === null ?
+                    "Pre-scale internal: —"
+                  : <span
+                      className={
+                        deltaInternalVsClass >= 0 ? "text-emerald-300" : (
+                          "text-red-300"
+                        )
+                      }
+                    >
+                      {`${deltaInternalVsClass >= 0 ? "+" : ""}${deltaInternalVsClass.toFixed(1)}`}{" "}
+                      pre-scale internal
+                    </span>
+                  }
+                </p>
+                <p className="text-xs text-white/50 mt-1">
+                  Requires class average input
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Original Marks */}
+          <div>
+            <div className="flex items-center gap-3 mb-5">
+              <h4 className="text-xl font-semibold text-white tracking-tight">
+                Assessment Marks
+              </h4>
+              <div className="h-px flex-1 bg-white/10" />
+            </div>
+            <p className="text-sm text-white/60 mb-4">
+              Enter raw marks for each assessment (decimals allowed). We scale
+              them automatically.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {visibleAssessmentComponents.map(({ key, label, max }) => (
+                <div key={key}>
+                  <label className="block text-sm font-semibold text-white/70 mb-3">
+                    {label}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max={max}
+                    step="any"
+                    inputMode="decimal"
+                    value={marks[key] === null ? "" : marks[key]}
+                    onChange={(e) => handleMarkChange(key, e.target.value)}
+                    onWheel={(e) => e.currentTarget.blur()}
+                    className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15]"
+                    placeholder={`Out of ${max}`}
+                  />
+                  <p className="text-xs text-white/40 mt-2">Max: {max}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Class Average Toggle */}
+          <div className="border-t border-white/10 pt-8">
+            <button
+              onClick={() => setShowClassAverage(!showClassAverage)}
+              className="text-sm font-semibold text-blue-300 hover:text-blue-200 transition-all duration-200 hover:translate-x-0.5"
+            >
+              {showClassAverage ? "Hide" : "Show"} Class Average Marks
+            </button>
+
+            {showClassAverage && (
+              <div className="mt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {visibleAssessmentComponents.map(({ key, label, max }) => (
+                    <div key={key}>
+                      <label className="block text-sm font-semibold text-white/70 mb-3">
+                        {label} (Class Avg)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max={max}
+                        step="any"
+                        inputMode="decimal"
+                        value={
+                          classAverage[key] === null ? "" : classAverage[key]
+                        }
+                        onChange={(e) =>
+                          handleClassAverageChange(key, e.target.value)
+                        }
+                        onWheel={(e) => e.currentTarget.blur()}
+                        className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15]"
+                        placeholder={`Class average`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Scaled Marks */}
+          <div className="border-t border-white/10 pt-8">
+            <div className="flex items-center gap-3 mb-5">
+              <h4 className="text-xl font-semibold text-white tracking-tight">
+                University Scaling
+              </h4>
+              <div className="h-px flex-1 bg-white/10" />
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
+                <span className="text-white/70">CAT-1 Scaled</span>
+                <span className="text-lg font-semibold text-white">
+                  {scaledMarks.cat1.toFixed(2)} / 15
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
+                <span className="text-white/70">CAT-2 Scaled</span>
+                <span className="text-lg font-semibold text-white">
+                  {scaledMarks.cat2.toFixed(2)} / 15
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
+                <span className="text-white/70">FAT Scaled</span>
+                <span className="text-lg font-semibold text-white">
+                  {scaledMarks.fat.toFixed(2)} / 40
+                </span>
+              </div>
+              {hasLabComponent && (
+                <div className="flex items-center justify-between py-3 border-b border-white/10">
+                  <span className="text-white/70">LAB Scaled</span>
+                  <span className="text-lg font-semibold text-white">
+                    {scaledMarks.lab.toFixed(2)} / {scaledMarks.labMax}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center justify-between py-4 border-b border-white/10">
+                <span className="font-semibold text-white">Internal Total</span>
+                <span className="text-xl font-bold text-blue-300">
+                  {scaledMarks.scaledInternal.toFixed(2)} /{" "}
+                  {scaledMarks.internalMax}
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-4">
+                <span className="font-bold text-lg text-white">
+                  Final Total
+                </span>
+                <span className="text-2xl font-bold text-blue-300">
+                  {finalTotal.toFixed(2)} / 100
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="border-t border-white/10 pt-8">
+            <div className="flex items-center gap-3 mb-4">
+              <h4 className="text-xl font-semibold text-white tracking-tight">
+                Notes
+              </h4>
+              <div className="h-px flex-1 bg-white/10" />
+            </div>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+              className="w-full px-4 py-3 bg-white/10 hover:bg-white/[0.15] border border-white/10 hover:border-white/20 rounded-lg text-white placeholder:text-white/30 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:border-blue-400/50 focus-visible:bg-white/[0.15] resize-none"
+              placeholder="Add notes, goals, or reminders for this subject..."
+            />
+          </div>
+
+          {/* Prediction Toggle */}
+          <div className="border-t border-white/10 pt-8">
+            <button
+              onClick={() => setShowPrediction(!showPrediction)}
+              className="text-sm font-semibold text-blue-300 hover:text-blue-200 transition-all duration-200 hover:translate-x-0.5"
+            >
+              {showPrediction ? "Hide" : "Show"} FAT Prediction
+            </button>
+
+            {showPrediction && (
+              <div className="mt-6">
+                <div className="text-sm text-white/60 mb-3">
+                  Based on CAT and Quiz performance
+                </div>
+                <div className="text-3xl font-bold text-blue-300">
+                  {prediction.toFixed(1)} / 100
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Save / Remove Buttons */}
+          <div className="border-t border-white/10 pt-8 flex items-center gap-3">
+            <button
+              onClick={handleSave}
+              className={`flex-1 py-3.5 text-white font-bold rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:translate-y-0 ${
+                saveState === "saved" ?
+                  "bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-emerald-500/20 hover:shadow-emerald-500/30"
+                : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/20 hover:shadow-blue-500/30"
+              }`}
+            >
+              {saveState === "saved" ?
+                <Check size={20} />
+              : <Save size={20} />}
+              {saveState === "saved" ? "Saved" : "Save Changes"}
+            </button>
+            {onRemove && (
+              <button
+                onClick={() => {
+                  if (window.confirm(`Remove "${subject}" from your dashboard?`)) {
+                    onRemove(subject);
+                  }
+                }}
+                className="px-4 py-3.5 rounded-lg border border-red-400/30 text-red-300 hover:bg-red-500/20 hover:border-red-400/60 transition-all duration-200 flex items-center gap-2 font-semibold text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60"
+                title="Remove this subject"
+              >
+                <Trash2 size={18} />
+                Remove
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SubjectCard;
