@@ -7,6 +7,8 @@ import {
   calculateUnscaledInternal,
 } from "../utils/calculations";
 import { Check, ChevronDown, ChevronUp, Save, Trash2 } from "lucide-react";
+// TODO: Add support for custom percentage rounding (1 vs 2 decimal places)
+// FIXME: Keyboard navigation sometimes skips expanded notes textarea on Safari
 const SubjectCard = ({
   subject,
   subjectData,

@@ -1,5 +1,8 @@
 import { getSubjectWeightage } from "./data";
 
+// TODO: Support customizable grading scales (e.g. 7-point or relative grading)
+// FIXME: Consider excluding incomplete/unattempted quizzes when computing consistency stdDev
+
 export const scaleCATMarks = (catMarks) => {
   if (catMarks === null || catMarks === undefined) return 0;
   return (catMarks / 50) * 15;
