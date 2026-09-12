@@ -193,7 +193,6 @@ export const resetSessionTimer = () => {
   }
 
   sessionTimer = setTimeout(() => {
-    console.warn("Session expired due to inactivity");
     logout();
   }, SESSION_TIMEOUT);
 };

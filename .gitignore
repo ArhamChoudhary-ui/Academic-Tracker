@@ -1,8 +1,50 @@
-node_modules
-dist
-.DS_Store
-*.log
+# ── Build output ────────────────────────────────────────────────────────────
+dist/
+dist-ssr/
+build/
+
+# ── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Environment & secrets ────────────────────────────────────────────────────
 .env
 .env.local
-.vscode
-.idea
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# ── Vite cache ───────────────────────────────────────────────────────────────
+.vite/
+vite.config.js.timestamp-*
+
+# ── Editor & IDE ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Test output ───────────────────────────────────────────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+
+# ── Type-check cache ──────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ── Misc ─────────────────────────────────────────────────────────────────────
+.cache/
+.parcel-cache/
+.turbo/
