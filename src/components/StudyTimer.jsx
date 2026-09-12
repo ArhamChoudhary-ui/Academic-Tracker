@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Play,
-  Pause,
-  Square,
-  Clock,
-  Target,
-  Volume2,
-  VolumeX,
-} from "lucide-react";
+import { Play, Pause, Square, Clock, Volume2, VolumeX } from "lucide-react";
 import { SUBJECTS } from "../utils/data";
 import {
   saveTimerSession,
@@ -18,6 +10,12 @@ import {
   formatTime,
   calculateTargetCompletion,
 } from "../utils/timerStorage";
+import TimerStatsSummary from "./timer/TimerStatsSummary";
+import TimerFeedbackModal from "./timer/TimerFeedbackModal";
+import TimerHistoryList from "./timer/TimerHistoryList";
+
+// TODO: Add audio notification tone selector in user settings
+// FIXME: Handle visibilitychange event so timer accurately tracks time when tab is backgrounded
 
 const StudyTimer = () => {
   const [isRunning, setIsRunning] = useState(false);
@@ -36,7 +34,6 @@ const StudyTimer = () => {
   const [pomodoroMode, setPomodoroMode] = useState(false);
 
   const intervalRef = useRef(null);
-  const audioRef = useRef(null);
 
   useEffect(() => {
     loadSessions();
@@ -86,9 +83,9 @@ const StudyTimer = () => {
     if (!soundEnabled) return;
 
     try {
-      const audioContext = new (
-        window.AudioContext || window.webkitAudioContext
-      )();
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      const audioContext = new AudioContextClass();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -99,15 +96,12 @@ const StudyTimer = () => {
       oscillator.type = "sine";
 
       gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.01,
-        audioContext.currentTime + 0.5,
-      );
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
 
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (error) {
-      console.error("Error playing sound:", error);
+    } catch {
+      // Audio context playback blocked or unsupported
     }
   };
 
@@ -123,13 +117,8 @@ const StudyTimer = () => {
     setIsRunning(true);
   };
 
-  const handlePause = () => {
-    setIsRunning(false);
-  };
-
-  const handleResume = () => {
-    setIsRunning(true);
-  };
+  const handlePause = () => setIsRunning(false);
+  const handleResume = () => setIsRunning(true);
 
   const handleStop = () => {
     setIsRunning(false);
@@ -173,7 +162,6 @@ const StudyTimer = () => {
 
   const targetSeconds = targetHours * 3600 + targetMinutes * 60;
   const progressPercent = calculateTargetCompletion(seconds, targetSeconds);
-
   const subjectSessions = sessions.filter((s) => s.subject === selectedSubject);
 
   return (
@@ -233,7 +221,7 @@ const StudyTimer = () => {
                     progressPercent >= 100 ? "bg-green-500" : "bg-blue-500"
                   }`}
                   style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                ></div>
+                />
               </div>
               <div className="text-xs text-gray-500">
                 {Math.round(progressPercent)}% of target
@@ -281,6 +269,7 @@ const StudyTimer = () => {
           <div className="flex gap-3 justify-center flex-wrap">
             {!isRunning && seconds === 0 && (
               <button
+                type="button"
                 onClick={handleStart}
                 disabled={!selectedSubject}
                 className="flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold rounded-lg transition-colors"
@@ -292,6 +281,7 @@ const StudyTimer = () => {
 
             {isRunning && (
               <button
+                type="button"
                 onClick={handlePause}
                 className="flex items-center gap-2 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-colors"
               >
@@ -302,6 +292,7 @@ const StudyTimer = () => {
 
             {!isRunning && seconds > 0 && !showFeedback && (
               <button
+                type="button"
                 onClick={handleResume}
                 className="flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors"
               >
@@ -312,6 +303,7 @@ const StudyTimer = () => {
 
             {seconds > 0 && !showFeedback && (
               <button
+                type="button"
                 onClick={handleStop}
                 className="flex items-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors"
               >
@@ -322,6 +314,7 @@ const StudyTimer = () => {
 
             {showFeedback && (
               <button
+                type="button"
                 onClick={handleReset}
                 className="flex items-center gap-2 px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
               >
@@ -331,17 +324,16 @@ const StudyTimer = () => {
             )}
 
             <button
+              type="button"
               onClick={() => setSoundEnabled(!soundEnabled)}
               className={`p-3 rounded-lg font-semibold transition-colors ${
-                soundEnabled ?
-                  "bg-blue-500 hover:bg-blue-600 text-white"
-                : "bg-gray-400 hover:bg-gray-500 text-white"
+                soundEnabled
+                  ? "bg-blue-500 hover:bg-blue-600 text-white"
+                  : "bg-gray-400 hover:bg-gray-500 text-white"
               }`}
               title={soundEnabled ? "Sound ON" : "Sound OFF"}
             >
-              {soundEnabled ?
-                <Volume2 size={20} />
-              : <VolumeX size={20} />}
+              {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
             </button>
           </div>
 
@@ -359,196 +351,28 @@ const StudyTimer = () => {
       </div>
 
       {showFeedback && (
-        <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 rounded-2xl shadow-lg p-8 border-2 border-purple-300 dark:border-purple-700">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            Session Complete!
-          </h3>
-
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                Rate Your Focus (1-5)
-              </label>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <button
-                    key={rating}
-                    onClick={() => setFocusRating(rating)}
-                    className={`w-12 h-12 rounded-lg font-bold text-lg transition-all ${
-                      focusRating === rating ?
-                        "bg-blue-500 text-white scale-110"
-                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:border-blue-500"
-                    }`}
-                  >
-                    {rating}
-                  </button>
-                ))}
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-                {focusRating === 1 && "Very Distracted"}
-                {focusRating === 2 && "Mostly Distracted"}
-                {focusRating === 3 && "Neutral"}
-                {focusRating === 4 && "Quite Focused"}
-                {focusRating === 5 && "Fully Focused"}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Notes (Optional)
-              </label>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="What did you study? Any challenges or wins?"
-                rows={3}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 resize-none"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                onClick={handleSaveSession}
-                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all"
-              >
-                Save Session
-              </button>
-              <button
-                onClick={handleReset}
-                className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-              >
-                Discard
-              </button>
-            </div>
-          </div>
-        </div>
+        <TimerFeedbackModal
+          focusRating={focusRating}
+          onFocusRatingChange={setFocusRating}
+          notes={notes}
+          onNotesChange={setNotes}
+          onSave={handleSaveSession}
+          onDiscard={handleReset}
+        />
       )}
 
       {selectedSubject && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Total Minutes
-                </p>
-                <p className="text-3xl font-bold mt-2 text-blue-600 dark:text-blue-400">
-                  {timerStats.totalMinutes || 0}
-                </p>
-              </div>
-              <Clock className="text-blue-500" size={24} />
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Sessions
-                </p>
-                <p className="text-3xl font-bold mt-2 text-purple-600 dark:text-purple-400">
-                  {timerStats.sessionCount || 0}
-                </p>
-              </div>
-              <Target className="text-purple-500" size={24} />
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Avg Duration
-                </p>
-                <p className="text-3xl font-bold mt-2 text-green-600 dark:text-green-400">
-                  {timerStats.averageDuration || 0}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">minutes</p>
-              </div>
-              <Clock className="text-green-500" size={24} />
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Daily Streak
-                </p>
-                <p className="text-3xl font-bold mt-2 text-orange-600 dark:text-orange-400">
-                  {dailyStreak}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">days</p>
-              </div>
-              <div className="text-orange-500 text-3xl">🔥</div>
-            </div>
-          </div>
-        </div>
+        <TimerStatsSummary
+          timerStats={timerStats}
+          dailyStreak={dailyStreak}
+        />
       )}
 
-      {subjectSessions.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            Recent Sessions - {selectedSubject}
-          </h3>
-
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {subjectSessions
-              .slice()
-              .reverse()
-              .map((session, idx) => (
-                <div
-                  key={session.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded">
-                        #{subjectSessions.length - idx}
-                      </span>
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        {formatTime(session.durationSeconds)}
-                      </span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {session.completedTarget ?
-                          <span className="text-green-600 dark:text-green-400 font-medium">
-                            ✓ Target Completed
-                          </span>
-                        : <span className="text-yellow-600 dark:text-yellow-400">
-                            Target: {formatTime(session.targetSeconds)}
-                          </span>
-                        }
-                      </span>
-                      {session.focusRating && (
-                        <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-                          Focus: {session.focusRating}/5
-                        </span>
-                      )}
-                    </div>
-                    {session.notes && (
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-                        {session.notes}
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                      {new Date(session.createdAt).toLocaleDateString()} at{" "}
-                      {new Date(session.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteSession(session.id)}
-                    className="ml-4 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors text-sm font-medium"
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
+      <TimerHistoryList
+        sessions={subjectSessions}
+        selectedSubject={selectedSubject}
+        onDeleteSession={handleDeleteSession}
+      />
     </div>
   );
 };

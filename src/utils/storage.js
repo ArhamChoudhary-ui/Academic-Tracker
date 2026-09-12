@@ -8,78 +8,84 @@ import {
 const STORAGE_KEY = "academic_tracker_data";
 const THEME_KEY = "academic_tracker_theme";
 const WEIGHTS_KEY = "academic_tracker_weights";
-export const saveToStorage = (data) => {
+
+// TODO: add JSON backup export alongside CSV export
+// FIXME: verify quota limits when users store extensive notes
+
+export const saveToStorage = (marksRecordMap) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(marksRecordMap));
     return true;
-  } catch (error) {
-    console.error("Error saving to localStorage:", error);
+  } catch {
     return false;
   }
 };
+
 export const loadFromStorage = () => {
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data === null) {
+    const rawStoredMarks = localStorage.getItem(STORAGE_KEY);
+    if (!rawStoredMarks) {
       return createEmptySubjectData();
     }
-    return mergeWithDefaultSubjectData(JSON.parse(data));
-  } catch (error) {
-    console.error("Error loading from localStorage:", error);
+    return mergeWithDefaultSubjectData(JSON.parse(rawStoredMarks));
+  } catch {
     return null;
   }
 };
 
 export const getSavedSubjects = () => {
-  const data = loadFromStorage();
-  if (data && Object.keys(data).length > 0) {
-    return Object.keys(data);
+  const currentMarksMap = loadFromStorage();
+  if (currentMarksMap && Object.keys(currentMarksMap).length > 0) {
+    return Object.keys(currentMarksMap);
   }
   return SUBJECTS;
 };
-export const saveTheme = (theme) => {
+
+export const saveTheme = (selectedThemeMode) => {
   try {
-    localStorage.setItem(THEME_KEY, theme);
-  } catch (error) {
-    console.error("Error saving theme:", error);
+    localStorage.setItem(THEME_KEY, selectedThemeMode);
+  } catch {
+    // Local storage unavailable
   }
 };
+
 export const loadTheme = () => {
   try {
     return localStorage.getItem(THEME_KEY) || "light";
-  } catch (error) {
-    console.error("Error loading theme:", error);
+  } catch {
     return "light";
   }
 };
-export const saveWeights = (weights) => {
+
+export const saveWeights = (subjectWeightageMap) => {
   try {
-    localStorage.setItem(WEIGHTS_KEY, JSON.stringify(weights));
-  } catch (error) {
-    console.error("Error saving weights:", error);
+    localStorage.setItem(WEIGHTS_KEY, JSON.stringify(subjectWeightageMap));
+  } catch {
+    // Local storage unavailable
   }
 };
+
 export const loadWeights = () => {
   try {
-    const weights = localStorage.getItem(WEIGHTS_KEY);
-    return weights ? JSON.parse(weights) : {};
-  } catch (error) {
-    console.error("Error loading weights:", error);
+    const rawWeights = localStorage.getItem(WEIGHTS_KEY);
+    return rawWeights ? JSON.parse(rawWeights) : {};
+  } catch {
     return {};
   }
 };
+
 export const clearStorage = () => {
   try {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(WEIGHTS_KEY);
     return true;
-  } catch (error) {
-    console.error("Error clearing storage:", error);
+  } catch {
     return false;
   }
 };
-export const exportToCSV = (data) => {
-  const normalizedData = mergeWithDefaultSubjectData(data);
+
+export const exportToCSV = (marksRecordMap) => {
+  const normalizedData = mergeWithDefaultSubjectData(marksRecordMap);
   const headers = [
     "Subject",
     "CAT-1",
@@ -95,12 +101,14 @@ export const exportToCSV = (data) => {
   const rows = [];
   const subjects = Object.keys(normalizedData);
   for (const subject of subjects) {
-    const subjectData = normalizedData[subject] || {};
-    const marks = subjectData.marks || createEmptyMarks();
-    const total = Object.values(marks).reduce((sum, val) => {
+    const subjectEntry = normalizedData[subject] || {};
+    const marks = subjectEntry.marks || createEmptyMarks();
+    const total = Object.values(marks).reduce((sum, scoreValue) => {
       return (
         sum +
-        (val !== null && val !== undefined && !isNaN(val) ? Number(val) : 0)
+        (scoreValue !== null && scoreValue !== undefined && !isNaN(scoreValue)
+          ? Number(scoreValue)
+          : 0)
       );
     }, 0);
     rows.push([

@@ -5,7 +5,6 @@ export const savePlannerData = (data) => {
     localStorage.setItem(SUBJECT_PLANNER_KEY, JSON.stringify(data));
     return true;
   } catch (error) {
-    console.error("Error saving planner data:", error);
     return false;
   }
 };
@@ -15,7 +14,6 @@ export const loadPlannerData = () => {
     const data = localStorage.getItem(SUBJECT_PLANNER_KEY);
     return data ? JSON.parse(data) : {};
   } catch (error) {
-    console.error("Error loading planner data:", error);
     return {};
   }
 };
@@ -25,7 +23,6 @@ export const clearPlannerData = () => {
     localStorage.removeItem(SUBJECT_PLANNER_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing planner data:", error);
     return false;
   }
 };
@@ -43,7 +40,6 @@ export const addPlanToDate = (dateKey, plan) => {
     savePlannerData(data);
     return true;
   } catch (error) {
-    console.error("Error adding plan:", error);
     return false;
   }
 };
@@ -60,7 +56,6 @@ export const removePlanFromDate = (dateKey, planId) => {
     savePlannerData(data);
     return true;
   } catch (error) {
-    console.error("Error removing plan:", error);
     return false;
   }
 };
@@ -70,7 +65,6 @@ export const getPlansForDate = (dateKey) => {
     const data = loadPlannerData();
     return data[dateKey] || [];
   } catch (error) {
-    console.error("Error getting plans:", error);
     return [];
   }
 };
@@ -90,7 +84,6 @@ export const updatePlan = (dateKey, planId, updates) => {
     savePlannerData(data);
     return true;
   } catch (error) {
-    console.error("Error updating plan:", error);
     return false;
   }
 };
@@ -100,7 +93,6 @@ export const getAllDatesWithPlans = () => {
     const data = loadPlannerData();
     return Object.keys(data);
   } catch (error) {
-    console.error("Error getting dates:", error);
     return [];
   }
 };

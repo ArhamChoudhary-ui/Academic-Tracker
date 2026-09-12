@@ -5,7 +5,6 @@ export const savePlannerData = (data) => {
     localStorage.setItem(PLANNER_KEY, JSON.stringify(data));
     return true;
   } catch (error) {
-    console.error("Error saving planner data:", error);
     return false;
   }
 };
@@ -15,7 +14,6 @@ export const loadPlannerData = () => {
     const data = localStorage.getItem(PLANNER_KEY);
     return data ? JSON.parse(data) : {};
   } catch (error) {
-    console.error("Error loading planner data:", error);
     return {};
   }
 };
@@ -25,7 +23,6 @@ export const clearPlannerData = () => {
     localStorage.removeItem(PLANNER_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing planner data:", error);
     return false;
   }
 };
@@ -44,7 +41,6 @@ export const addPlannerTask = (dateKey, task) => {
     savePlannerData(data);
     return newTask;
   } catch (error) {
-    console.error("Error adding planner task:", error);
     return null;
   }
 };
@@ -64,7 +60,6 @@ export const updatePlannerTask = (dateKey, taskId, updates) => {
     savePlannerData(data);
     return data[dateKey][taskIndex];
   } catch (error) {
-    console.error("Error updating planner task:", error);
     return null;
   }
 };
@@ -81,7 +76,6 @@ export const deletePlannerTask = (dateKey, taskId) => {
     savePlannerData(data);
     return true;
   } catch (error) {
-    console.error("Error deleting planner task:", error);
     return false;
   }
 };
@@ -91,7 +85,6 @@ export const getPlannerTasksForDate = (dateKey) => {
     const data = loadPlannerData();
     return data[dateKey] || [];
   } catch (error) {
-    console.error("Error getting planner tasks:", error);
     return [];
   }
 };
@@ -100,7 +93,6 @@ export const getAllPlannerTasks = () => {
   try {
     return loadPlannerData();
   } catch (error) {
-    console.error("Error getting all planner tasks:", error);
     return {};
   }
 };
@@ -126,7 +118,6 @@ export const getUpcomingTasks = (daysAhead = 7) => {
 
     return upcoming;
   } catch (error) {
-    console.error("Error getting upcoming tasks:", error);
     return [];
   }
 };
@@ -143,7 +134,6 @@ export const getTasksBySubject = (subject) => {
 
     return tasks;
   } catch (error) {
-    console.error("Error getting tasks by subject:", error);
     return [];
   }
 };

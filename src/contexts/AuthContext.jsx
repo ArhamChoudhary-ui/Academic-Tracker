@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
       try {
         setUser(JSON.parse(storedUser));
       } catch (error) {
-        console.error("Error loading user session:", error);
         localStorage.removeItem("academic_tracker_user");
       }
     }

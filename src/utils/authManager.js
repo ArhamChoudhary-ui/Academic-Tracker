@@ -33,7 +33,6 @@ export const initializeAuth = async () => {
     }
     return { isFirstTime: false, passwordExists: true };
   } catch (error) {
-    console.error("Error initializing auth:", error);
     throw error;
   }
 };
@@ -61,7 +60,6 @@ export const setupPassword = async (password) => {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(metadata));
     return true;
   } catch (error) {
-    console.error("Error setting up password:", error);
     throw error;
   }
 };
@@ -116,7 +114,6 @@ export const authenticate = async (password) => {
       token: sessionToken,
     };
   } catch (error) {
-    console.error("Authentication failed:", error);
     throw error;
   }
 };
@@ -251,7 +248,6 @@ export const changePassword = async (oldPassword, newPassword) => {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedMetadata));
     return true;
   } catch (error) {
-    console.error("Error changing password:", error);
     throw error;
   }
 };

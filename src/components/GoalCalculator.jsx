@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Target, TrendingUp, Calculator, X } from "lucide-react";
 import { getScaledMarks } from "../utils/calculations";
 import { getSubjectWeightage } from "../utils/data";
-
+// TODO: Allow multi-subject bulk target simulation
+// FIXME: Handle rare edge case where target is lower than already achieved CAT+Quiz scores
 export default function GoalCalculator({ subjectsData, onClose }) {
   const subjects = Object.keys(subjectsData || {});
   const [targetPercentage, setTargetPercentage] = useState(94);

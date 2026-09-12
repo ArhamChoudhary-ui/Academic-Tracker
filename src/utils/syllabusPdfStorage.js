@@ -17,18 +17,15 @@ export const saveSyllabusPdf = async (subject, file) => {
           localStorage.setItem(SYLLABUS_PDF_KEY, JSON.stringify(data));
           resolve(true);
         } catch (error) {
-          console.error("Error saving PDF:", error);
           reject(false);
         }
       };
       reader.onerror = () => {
-        console.error("Error reading file");
         reject(false);
       };
       reader.readAsDataURL(file);
     });
   } catch (error) {
-    console.error("Error in saveSyllabusPdf:", error);
     return false;
   }
 };
@@ -38,7 +35,6 @@ export const loadSyllabusPdfs = () => {
     const data = localStorage.getItem(SYLLABUS_PDF_KEY);
     return data ? JSON.parse(data) : {};
   } catch (error) {
-    console.error("Error loading PDFs:", error);
     return {};
   }
 };
@@ -50,7 +46,6 @@ export const removeSyllabusPdf = (subject) => {
     localStorage.setItem(SYLLABUS_PDF_KEY, JSON.stringify(data));
     return true;
   } catch (error) {
-    console.error("Error removing PDF:", error);
     return false;
   }
 };
@@ -60,7 +55,6 @@ export const getSyllabusPdf = (subject) => {
     const data = loadSyllabusPdfs();
     return data[subject] || null;
   } catch (error) {
-    console.error("Error getting PDF:", error);
     return null;
   }
 };
@@ -70,7 +64,6 @@ export const clearAllPdfs = () => {
     localStorage.removeItem(SYLLABUS_PDF_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing PDFs:", error);
     return false;
   }
 };
@@ -81,7 +74,6 @@ export const getStorageSize = () => {
     if (!data) return 0;
     return new Blob([data]).size;
   } catch (error) {
-    console.error("Error calculating storage size:", error);
     return 0;
   }
 };

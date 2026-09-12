@@ -60,7 +60,6 @@ const SyllabusPdfHub = () => {
           alert("Failed to upload syllabus");
         }
       } catch (error) {
-        console.error("Upload error:", error);
         alert("Error uploading file");
       } finally {
         setUploadingSubject(null);

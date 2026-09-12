@@ -30,7 +30,6 @@ export const saveToEncryptedStorage = async (data) => {
     await saveEncryptedData(SUBJECT_DATA_KEY, data, encryptionKey, nonce);
     return true;
   } catch (error) {
-    console.error("Error saving to encrypted storage:", error);
     throw error;
   }
 };
@@ -44,7 +43,6 @@ export const loadFromEncryptedStorage = async () => {
     const data = await loadEncryptedData(SUBJECT_DATA_KEY, encryptionKey);
     return data ? mergeWithDefaultSubjectData(data) : null;
   } catch (error) {
-    console.error("Error loading from encrypted storage:", error);
     throw error;
   }
 };
@@ -59,7 +57,6 @@ export const saveWeights = async (weights) => {
     await saveEncryptedData(WEIGHTS_KEY, weights, encryptionKey, nonce);
     return true;
   } catch (error) {
-    console.error("Error saving weights:", error);
     throw error;
   }
 };
@@ -73,7 +70,6 @@ export const loadWeights = async () => {
     const data = await loadEncryptedData(WEIGHTS_KEY, encryptionKey);
     return data || null;
   } catch (error) {
-    console.error("Error loading weights:", error);
     return null;
   }
 };
@@ -86,7 +82,6 @@ export const saveTheme = (theme) => {
     localStorage.setItem(THEME_KEY, theme);
     return true;
   } catch (error) {
-    console.error("Error saving theme:", error);
     return false;
   }
 };
@@ -98,7 +93,6 @@ export const loadTheme = () => {
   try {
     return localStorage.getItem(THEME_KEY) || "light";
   } catch (error) {
-    console.error("Error loading theme:", error);
     return "light";
   }
 };
@@ -112,7 +106,6 @@ export const clearAllEncryptedData = async () => {
     await deleteEncryptedData(WEIGHTS_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing encrypted data:", error);
     throw error;
   }
 };
@@ -187,7 +180,6 @@ export const saveToStorage = (data) => {
     localStorage.setItem("academic_tracker_data", JSON.stringify(data));
     return true;
   } catch (error) {
-    console.error("Error saving to localStorage:", error);
     return false;
   }
 };
@@ -197,7 +189,6 @@ export const loadFromStorage = () => {
     const data = localStorage.getItem("academic_tracker_data");
     return data ? mergeWithDefaultSubjectData(JSON.parse(data)) : null;
   } catch (error) {
-    console.error("Error loading from localStorage:", error);
     return null;
   }
 };
@@ -208,7 +199,6 @@ export const clearStorage = () => {
     localStorage.removeItem("academic_tracker_weights");
     return true;
   } catch (error) {
-    console.error("Error clearing storage:", error);
     return false;
   }
 };

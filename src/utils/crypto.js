@@ -63,7 +63,6 @@ export const deriveKeyFromPassword = async (password, salt) => {
     const keyBuffer = await window.crypto.subtle.exportKey("raw", key);
     return new Uint8Array(keyBuffer);
   } catch (error) {
-    console.error("Error deriving key:", error);
     throw error;
   }
 };
@@ -95,7 +94,6 @@ export const hashPassword = async (password) => {
     const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
     return encodeBase64(new Uint8Array(hashBuffer));
   } catch (error) {
-    console.error("Error hashing password:", error);
     throw error;
   }
 };
@@ -108,7 +106,6 @@ export const verifyPassword = async (password, hash) => {
     const calculatedHash = await hashPassword(password);
     return calculatedHash === hash;
   } catch (error) {
-    console.error("Error verifying password:", error);
     throw error;
   }
 };

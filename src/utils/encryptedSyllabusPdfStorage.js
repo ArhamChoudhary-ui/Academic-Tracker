@@ -50,18 +50,15 @@ export const saveSyllabusPdf = async (subject, file) => {
           );
           resolve(true);
         } catch (error) {
-          console.error("Error saving encrypted PDF:", error);
           reject(error);
         }
       };
       reader.onerror = () => {
-        console.error("Error reading file");
         reject(new Error("Failed to read file"));
       };
       reader.readAsDataURL(file);
     });
   } catch (error) {
-    console.error("Error in saveSyllabusPdf:", error);
     throw error;
   }
 };
@@ -75,7 +72,6 @@ export const loadSyllabusPdfs = async () => {
     const nonce = getNonce();
     return await loadAllPdfs(encryptionKey, nonce);
   } catch (error) {
-    console.error("Error loading PDFs:", error);
     throw error;
   }
 };
@@ -88,7 +84,6 @@ const loadAllPdfs = async (encryptionKey, nonce) => {
     const data = await loadEncryptedData(SYLLABUS_PDF_KEY, encryptionKey);
     return data || {};
   } catch (error) {
-    console.error("Error loading encrypted PDFs:", error);
     return {};
   }
 };
@@ -111,7 +106,6 @@ export const removeSyllabusPdf = async (subject) => {
     }
     return true;
   } catch (error) {
-    console.error("Error removing PDF:", error);
     throw error;
   }
 };
@@ -124,7 +118,6 @@ export const getSyllabusPdf = async (subject) => {
     const pdfs = await loadSyllabusPdfs();
     return pdfs[subject] || null;
   } catch (error) {
-    console.error("Error getting PDF:", error);
     throw error;
   }
 };
@@ -138,7 +131,6 @@ export const clearAllPdfs = async () => {
     await deleteEncryptedData(SYLLABUS_PDF_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing PDFs:", error);
     throw error;
   }
 };
@@ -155,7 +147,6 @@ export const getStorageSize = async () => {
     });
     return totalSize;
   } catch (error) {
-    console.error("Error calculating storage size:", error);
     return 0;
   }
 };

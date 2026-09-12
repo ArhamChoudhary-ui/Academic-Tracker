@@ -12,7 +12,6 @@ export const saveTimerSession = (session) => {
     localStorage.setItem(TIMER_SESSIONS_KEY, JSON.stringify(sessions));
     return newSession;
   } catch (error) {
-    console.error("Error saving timer session:", error);
     return null;
   }
 };
@@ -22,7 +21,6 @@ export const loadTimerSessions = () => {
     const sessions = localStorage.getItem(TIMER_SESSIONS_KEY);
     return sessions ? JSON.parse(sessions) : [];
   } catch (error) {
-    console.error("Error loading timer sessions:", error);
     return [];
   }
 };
@@ -34,7 +32,6 @@ export const deleteTimerSession = (sessionId) => {
     localStorage.setItem(TIMER_SESSIONS_KEY, JSON.stringify(filtered));
     return true;
   } catch (error) {
-    console.error("Error deleting timer session:", error);
     return false;
   }
 };
@@ -68,7 +65,6 @@ export const getTimerStatsForSubject = (subject) => {
       targetsCompleted,
     };
   } catch (error) {
-    console.error("Error calculating timer stats:", error);
     return {
       totalMinutes: 0,
       sessionCount: 0,
@@ -116,7 +112,6 @@ export const calculateDailyStreak = () => {
 
     return streak;
   } catch (error) {
-    console.error("Error calculating streak:", error);
     return 0;
   }
 };
@@ -126,7 +121,6 @@ export const clearAllTimerSessions = () => {
     localStorage.removeItem(TIMER_SESSIONS_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing timer sessions:", error);
     return false;
   }
 };
