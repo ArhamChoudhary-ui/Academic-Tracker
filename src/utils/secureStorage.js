@@ -65,7 +65,6 @@ export const saveEncryptedData = async (key, data, encryptionKey, nonce) => {
       putRequest.onsuccess = () => resolve(true);
     });
   } catch (error) {
-    console.error("Error saving encrypted data:", error);
     throw error;
   }
 };
@@ -113,7 +112,6 @@ export const loadEncryptedData = async (key, encryptionKey) => {
       };
     });
   } catch (error) {
-    console.error("Error loading encrypted data:", error);
     throw error;
   }
 };
@@ -133,7 +131,6 @@ export const deleteEncryptedData = async (key) => {
       deleteRequest.onsuccess = () => resolve(true);
     });
   } catch (error) {
-    console.error("Error deleting encrypted data:", error);
     throw error;
   }
 };
@@ -153,7 +150,6 @@ export const clearAllEncryptedData = async () => {
       clearRequest.onsuccess = () => resolve(true);
     });
   } catch (error) {
-    console.error("Error clearing encrypted data:", error);
     throw error;
   }
 };
@@ -173,7 +169,6 @@ export const listEncryptedKeys = async () => {
       getAllKeys.onsuccess = () => resolve(getAllKeys.result || []);
     });
   } catch (error) {
-    console.error("Error listing keys:", error);
     throw error;
   }
 };
@@ -199,7 +194,6 @@ export const getStorageStats = async () => {
       };
     });
   } catch (error) {
-    console.error("Error getting storage stats:", error);
     throw error;
   }
 };

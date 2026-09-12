@@ -15,7 +15,6 @@ export const groupSessionsByDate = (sessions) => {
       }
       grouped[dateKey].push(session);
     } catch (error) {
-      console.error("Error grouping session by date:", error);
     }
   });
 

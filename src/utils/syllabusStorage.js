@@ -13,7 +13,6 @@ export const saveSyllabusData = (data) => {
     localStorage.setItem(SYLLABUS_KEY, JSON.stringify(data));
     return true;
   } catch (error) {
-    console.error("Error saving syllabus data:", error);
     return false;
   }
 };
@@ -31,7 +30,6 @@ export const loadSyllabusData = (subjects) => {
 
     return parsed;
   } catch (error) {
-    console.error("Error loading syllabus data:", error);
     return createDefaultSyllabus(subjects);
   }
 };
@@ -41,7 +39,6 @@ export const clearSyllabusData = () => {
     localStorage.removeItem(SYLLABUS_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing syllabus data:", error);
     return false;
   }
 };
@@ -75,7 +72,6 @@ export const addTopic = (subject, topic, parentId = null) => {
     saveSyllabusData(allData);
     return newTopic;
   } catch (error) {
-    console.error("Error adding topic:", error);
     return null;
   }
 };
@@ -105,7 +101,6 @@ export const updateTopic = (subject, topicId, updates) => {
     saveSyllabusData(allData);
     return topic;
   } catch (error) {
-    console.error("Error updating topic:", error);
     return null;
   }
 };
@@ -136,7 +131,6 @@ export const deleteTopic = (subject, topicId) => {
     }
     return false;
   } catch (error) {
-    console.error("Error deleting topic:", error);
     return false;
   }
 };
@@ -146,7 +140,6 @@ export const getSyllabusForSubject = (subject, subjects) => {
     const allData = loadSyllabusData(subjects);
     return allData[subject] || [];
   } catch (error) {
-    console.error("Error getting syllabus:", error);
     return [];
   }
 };
@@ -155,7 +148,6 @@ export const getAllSyllabusData = (subjects) => {
   try {
     return loadSyllabusData(subjects);
   } catch (error) {
-    console.error("Error getting all syllabus data:", error);
     return createDefaultSyllabus(subjects);
   }
 };
@@ -194,7 +186,6 @@ export const getSubjectProgress = (subject, subjects) => {
         : 0,
     };
   } catch (error) {
-    console.error("Error calculating subject progress:", error);
     return { total: 0, completed: 0, percentage: 0 };
   }
 };
@@ -217,7 +208,6 @@ export const getOverallProgress = (subjects) => {
         totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0,
     };
   } catch (error) {
-    console.error("Error calculating overall progress:", error);
     return { total: 0, completed: 0, percentage: 0 };
   }
 };
@@ -239,7 +229,6 @@ export const getAllTopicsFlattened = (subject, subjects) => {
     flatten(syllabus);
     return flattened;
   } catch (error) {
-    console.error("Error flattening topics:", error);
     return [];
   }
 };
@@ -249,7 +238,6 @@ export const getTopicById = (subject, topicId, subjects) => {
     const syllabus = getSyllabusForSubject(subject, subjects);
     return findTopic(syllabus, topicId);
   } catch (error) {
-    console.error("Error getting topic by ID:", error);
     return null;
   }
 };
@@ -259,7 +247,6 @@ export const markTopicCompleted = (subject, topicId, completed = true) => {
     const topic = updateTopic(subject, topicId, { completed });
     return topic;
   } catch (error) {
-    console.error("Error marking topic completed:", error);
     return null;
   }
 };

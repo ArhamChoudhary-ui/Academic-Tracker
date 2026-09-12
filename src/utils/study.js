@@ -12,7 +12,6 @@ export const saveStudySession = (session) => {
     localStorage.setItem(STUDY_SESSIONS_KEY, JSON.stringify(sessions));
     return newSession;
   } catch (error) {
-    console.error("Error saving study session:", error);
     return null;
   }
 };
@@ -22,7 +21,6 @@ export const loadAllStudySessions = () => {
     const sessions = localStorage.getItem(STUDY_SESSIONS_KEY);
     return sessions ? JSON.parse(sessions) : [];
   } catch (error) {
-    console.error("Error loading study sessions:", error);
     return [];
   }
 };
@@ -34,7 +32,6 @@ export const deleteStudySession = (sessionId) => {
     localStorage.setItem(STUDY_SESSIONS_KEY, JSON.stringify(filtered));
     return true;
   } catch (error) {
-    console.error("Error deleting study session:", error);
     return false;
   }
 };
@@ -78,7 +75,6 @@ export const clearAllStudySessions = () => {
     localStorage.removeItem(STUDY_SESSIONS_KEY);
     return true;
   } catch (error) {
-    console.error("Error clearing study sessions:", error);
     return false;
   }
 };
