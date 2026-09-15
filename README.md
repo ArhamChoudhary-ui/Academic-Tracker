@@ -66,19 +66,13 @@ Predicted FAT = Mean(assessments) + Trend×0.5
 ```
 where `Trend = avg(second half scores) − avg(first half scores)`, capped to 0–100.
 
-**GPA** (4.0 scale):
-
-| % range | GPA |
-|---|---|
-| ≥ 90 | 4.0 |
-| 80–89 | 3.7 |
-| 70–79 | 3.3 |
-| 60–69 | 3.0 |
-| 50–59 | 2.7 |
-| 40–49 | 2.0 |
-| < 40 | 0.0 |
-
----
+##Extra Feature:
+```
+You can Dynamically add and remove subjects
+Also There credit management system as 
+- There are courses lab only
+- There are 50-50 courses 
+```
 
 ## Privacy
 
