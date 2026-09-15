@@ -3,7 +3,7 @@ import { FileText, Upload, X } from "lucide-react";
 import { sanitizeDisplayFileName } from "../../utils/fileNameSanitizer";
 
 /**
- * Reusable PDF upload zone. Used by both AiStudyAssistant and
+ * Reusable PDF upload zone. Used by both StudyNotesAssistant and
  * ExamQuestionGenerator. Stateless — state managed via usePdfExtractor.
  */
 export function PdfDropZone({

@@ -1,6 +1,6 @@
 /**
- * AI Exam Question Generator
- * Generates exam-oriented questions from extracted PDF text
+ * Exam Question Practice Generator
+ * Generates exam-oriented practice questions from syllabus document text
  */
 
 export const generateExamQuestions = (pdfText, subject, difficulty) => {

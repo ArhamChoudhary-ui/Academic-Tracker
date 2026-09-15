@@ -379,7 +379,7 @@ Edit `ReportView.jsx`:
 5. **Export Sessions**: Download study session logs as CSV
 6. **Session Analytics**: Charts showing study pattern trends
 7. **Collaborative Reports**: Share reports via link/QR code
-8. **Study Recommendations**: AI suggestions based on consistency patterns
+8. **Study Recommendations**: Smart suggestions based on consistency patterns
 
 ---
 

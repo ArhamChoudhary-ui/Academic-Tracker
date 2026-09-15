@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { loadSyllabusPdfs } from "../utils/syllabusPdfStorage";
 import { SUBJECTS } from "../utils/data";
-import { generateExamQuestions } from "../utils/aiQuestionGenerator";
+import { generateExamQuestions } from "../utils/questionGenerator";
 import { usePdfExtractor } from "../hooks/usePdfExtractor";
 import { PdfDropZone } from "./shared/PdfDropZone";
 import { ErrorBanner } from "./shared/ErrorBanner";

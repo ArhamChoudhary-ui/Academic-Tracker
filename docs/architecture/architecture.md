@@ -567,7 +567,7 @@ npm run preview
 - [ ] Cloud sync (optional)
 - [ ] Collaboration (share with mentor)
 - [ ] PDF export with charts
-- [ ] AI-powered insights
+- [ ] Automated study insights
 
 ### Phase 4 Features
 

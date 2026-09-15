@@ -25,7 +25,7 @@ async function readPagesAsText(pdfDocument) {
  * Shared hook for PDF file validation, drag-and-drop upload, and text extraction.
  *
  * Eliminates the ~120 lines of copy-pasted PDF handling that existed in
- * both AiStudyAssistant and ExamQuestionGenerator.
+ * both StudyNotesAssistant and ExamQuestionGenerator.
  */
 export function usePdfExtractor({ onFileCleared } = {}) {
   const [uploadedFile, setUploadedFile] = useState(null);

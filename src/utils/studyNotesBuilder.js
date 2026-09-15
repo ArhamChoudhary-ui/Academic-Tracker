@@ -2,7 +2,7 @@
  * studyNotesBuilder.js
  *
  * Converts raw PDF text into a structured, human-readable study-notes string.
- * Extracted from AiStudyAssistant so the component file stays focused on UI.
+ * Extracted notes builder utility so the component file stays focused on UI.
  */
 
 // ─── Text cleaning ────────────────────────────────────────────────────────────
@@ -241,10 +241,10 @@ ${practiceQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n")}
 ⚠️ IMPORTANT NOTES
 ━━━━━━━━━━━━━━━━━━━━━━
 ${importantNotes.map((note) => `- ${note}`).join("\n")}
-- This is an AI-generated summary from PDF text extraction
-- Some content may be missing if the PDF had images or complex formatting
-- Always refer to the original PDF for complete information
-- Use these notes as a study aid, not a replacement for the original material
+- Extracted and structured directly from document text
+- Some content may be omitted if the document contained complex charts or formatting
+- Always refer to the original syllabus document for complete topic details
+- Use these notes as a structured study guide and revision aid
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📄 ONE-PAGE REVISION

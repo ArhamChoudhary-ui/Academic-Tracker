@@ -52,7 +52,7 @@ function renderNotesAsHtml(rawNotes) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-const AiStudyAssistant = () => {
+const StudyNotesAssistant = () => {
   const [storedPdfs, setStoredPdfs] = useState({});
   const [selectedSubject, setSelectedSubject] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -289,4 +289,4 @@ const AiStudyAssistant = () => {
   );
 };
 
-export default AiStudyAssistant;
+export default StudyNotesAssistant;

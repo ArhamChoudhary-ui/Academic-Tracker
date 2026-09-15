@@ -74,7 +74,7 @@ Also There credit management system as
 
 ## Privacy
 
-Everything runs in the browser. No analytics, no tracking, no server calls except the optional cloud sync you configure yourself. The AI features (study assistant, question generator) run entirely client-side using pdf.js and local text processing — no API calls are made.
+Everything runs in the browser. No analytics, no tracking, no server calls except the optional cloud sync you configure yourself. All study assistance, question generation, and document parsing run entirely client-side using pdf.js and local text processing — no external API calls or third-party servers are used.
 
 ---
 
