@@ -52,29 +52,6 @@ npm run preview      # preview the built output locally
 
 ---
 
-## Project layout
-
-```
-src/
-  components/
-    shared/          # reusable UI pieces (PdfDropZone, ErrorBanner, …)
-    SubjectCard.jsx
-    ExamQuestionGenerator.jsx
-    AiStudyAssistant.jsx
-    ...
-  hooks/
-    usePdfExtractor.js   # shared PDF upload + text-extraction logic
-  utils/
-    calculations.js      # mark scaling, GPA, FAT prediction, stats
-    data.js              # default subjects, weightage config, empty-state factories
-    storage.js           # localStorage read/write helpers
-    studyNotesBuilder.js # PDF-to-study-notes text processing
-    ...
-  App.jsx
-  main.jsx
-```
-
----
 
 ## Calculation notes
 
