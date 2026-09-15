@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
 import { loadPlannerData } from "../utils/subjectPlannerStorage";
 import SubjectPlannerModal from "./SubjectPlannerModal";
+import StudyTimer from "./StudyTimer";
 
 const StudyPlanner = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [plansMap, setPlansMap] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [plannerTab, setPlannerTab] = useState("calendar");
 
   const loadPlansForMonth = useCallback(() => {
     const allPlans = loadPlannerData();
@@ -138,7 +140,39 @@ const StudyPlanner = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+      {/* Planner Sub-Tabs */}
+      <div className="flex items-center gap-2 p-1.5 bg-white/5 border border-white/10 rounded-xl w-fit backdrop-blur-sm">
+        <button
+          type="button"
+          onClick={() => setPlannerTab("calendar")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            plannerTab === "calendar"
+              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20"
+              : "text-white/60 hover:text-white hover:bg-white/5"
+          }`}
+        >
+          <Calendar size={16} />
+          Schedule Calendar
+        </button>
+        <button
+          type="button"
+          onClick={() => setPlannerTab("timer")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            plannerTab === "timer"
+              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/20"
+              : "text-white/60 hover:text-white hover:bg-white/5"
+          }`}
+        >
+          <Clock size={16} />
+          Study Timer & Pomodoro
+        </button>
+      </div>
+
+      {plannerTab === "timer" ? (
+        <StudyTimer />
+      ) : (
+        <>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -250,6 +284,8 @@ const StudyPlanner = () => {
           dateKey={selectedDate}
           onClose={handleCloseModal}
         />
+      )}
+        </>
       )}
     </div>
   );

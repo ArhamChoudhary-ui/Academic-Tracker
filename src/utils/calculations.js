@@ -1,4 +1,5 @@
 import { getSubjectWeightage } from "./data";
+import { getSubjectInternals } from "./internalsManager";
 
 // TODO: Support customizable grading scales (e.g. 7-point or relative grading)
 // FIXME: Consider excluding incomplete/unattempted quizzes when computing consistency stdDev
@@ -19,18 +20,33 @@ export const scaleLABMarks = (labMarks, subject) => {
   return (labMarks / 100) * lab;
 };
 
-export const calculateUnscaledInternal = (marks) => {
+export const calculateUnscaledInternal = (marks, subject) => {
+  if (!marks) return 0;
   const scaledCat1 = scaleCATMarks(marks.cat1);
   const scaledCat2 = scaleCATMarks(marks.cat2);
   const scaledFat = scaleFATMarks(marks.fat);
-  const quiz1 = marks.quiz1 || 0;
-  const quiz2 = marks.quiz2 || 0;
-  const quiz3 = marks.quiz3 || 0;
-  return scaledCat1 + scaledCat2 + quiz1 + quiz2 + quiz3 + scaledFat;
+
+  let internalsSum = 0;
+  if (subject) {
+    const tasks = getSubjectInternals(subject);
+    tasks.forEach((task) => {
+      const val = marks[task.id];
+      if (val !== null && val !== undefined && val !== "" && !isNaN(val)) {
+        internalsSum += Number(val);
+      }
+    });
+  } else {
+    const quiz1 = marks.quiz1 || 0;
+    const quiz2 = marks.quiz2 || 0;
+    const quiz3 = marks.quiz3 || 0;
+    internalsSum = quiz1 + quiz2 + quiz3;
+  }
+
+  return scaledCat1 + scaledCat2 + internalsSum + scaledFat;
 };
 
 export const calculateScaledInternal = (marks, subject) => {
-  const unscaledInternal = calculateUnscaledInternal(marks);
+  const unscaledInternal = calculateUnscaledInternal(marks, subject);
   const { internal } = getSubjectWeightage(subject);
   return (unscaledInternal / 100) * internal;
 };

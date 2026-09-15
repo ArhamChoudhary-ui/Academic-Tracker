@@ -17,6 +17,11 @@ import {
   formatFileSize,
 } from "../utils/syllabusPdfStorage";
 import { SUBJECTS } from "../utils/data";
+import { getSavedSubjects } from "../utils/storage";
+import {
+  sanitizeDisplayFileName,
+  getSafeDownloadFileName,
+} from "../utils/fileNameSanitizer";
 
 const SyllabusPdfHub = () => {
   const [pdfs, setPdfs] = useState({});
@@ -92,7 +97,7 @@ const SyllabusPdfHub = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = pdf.fileName;
+      link.download = getSafeDownloadFileName(pdf.fileName, subject);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -153,7 +158,7 @@ const SyllabusPdfHub = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {SUBJECTS.map((subject) => {
+        {(getSavedSubjects() || SUBJECTS).map((subject) => {
           const pdf = pdfs[subject];
           const isUploading = uploadingSubject === subject;
 
@@ -171,7 +176,7 @@ const SyllabusPdfHub = () => {
                 <div className="space-y-4">
                   <div className="text-sm text-white/70">
                     <div className="font-medium text-white truncate">
-                      {pdf.fileName}
+                      {sanitizeDisplayFileName(pdf.fileName, subject)}
                     </div>
                     <div className="mt-2 text-white/50">
                       Size: {formatFileSize(pdf.fileSize)}
@@ -262,7 +267,7 @@ const SyllabusPdfHub = () => {
                   {viewingPdf.subject} - Syllabus
                 </h3>
                 <p className="text-sm text-white/60 mt-1">
-                  {viewingPdf.fileName}
+                  {sanitizeDisplayFileName(viewingPdf.fileName, viewingPdf.subject)}
                 </p>
               </div>
               <div className="flex items-center gap-3">

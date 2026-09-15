@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
 import AddSubjectModal from "./components/AddSubjectModal";
+import InternalsManager from "./components/InternalsManager";
 import Charts from "./components/Charts";
 import SubjectPlanner from "./components/SubjectPlanner";
 import SyllabusPdfHub from "./components/SyllabusPdfHub";
@@ -63,7 +64,7 @@ function App() {
 
   useEffect(() => {
     const savedData = loadFromStorage();
-    setSubjectsData(savedData || createEmptySubjectData());
+    setSubjectsData(savedData || {});
     setIsLoading(false);
   }, []);
 
@@ -167,7 +168,7 @@ function App() {
       clearStorage();
       clearAllStudySessions();
       clearAllTimerSessions();
-      setSubjectsData(createEmptySubjectData());
+      setSubjectsData({});
     }
   };
 
@@ -236,13 +237,13 @@ function App() {
               </div>
 
               <nav className="flex gap-8 border-t border-white/10 overflow-x-auto -mx-6 px-6 sm:-mx-8 sm:px-8">
-                {["subjects", "charts", "planner", "syllabus"].map((tab) => (
+                {["subjects", "internals", "charts", "planner", "syllabus"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`py-4 px-0 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
+                    className={`py-4 px-0 text-sm font-medium border-b-2 transition-colors whitespace-nowrap capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${
                       activeTab === tab ?
-                        "border-white text-white"
+                        "border-white text-white font-bold"
                       : "border-transparent text-white/60 hover:text-white"
                     }`}
                   >
@@ -350,6 +351,15 @@ function App() {
                 </div>
               );
             })()}
+            {activeTab === "internals" && (
+              <InternalsManager
+                subjectsData={subjectsData}
+                onOpenAddSubject={() => setShowAddSubject(true)}
+                onStructureUpdated={() => {
+                  setSubjectsData((prev) => ({ ...(prev || {}) }));
+                }}
+              />
+            )}
             {activeTab === "charts" && (
               <div className="space-y-10">
                 <div className="space-y-3">

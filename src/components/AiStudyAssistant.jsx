@@ -14,6 +14,7 @@ import { usePdfExtractor } from "../hooks/usePdfExtractor";
 import { PdfDropZone } from "./shared/PdfDropZone";
 import { ErrorBanner } from "./shared/ErrorBanner";
 import { buildStudyNotes } from "../utils/studyNotesBuilder";
+import { sanitizeDisplayFileName } from "../utils/fileNameSanitizer";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -123,9 +124,9 @@ const AiStudyAssistant = () => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-3xl font-bold text-white mb-2">AI Study Assistant</h2>
+        <h2 className="text-3xl font-bold text-white mb-2">Study Notes Assistant</h2>
         <p className="text-white/60">
-          Upload any PDF and get structured, human-readable study notes
+          Upload course syllabus or lecture slides to generate comprehensive, structured study notes
         </p>
       </div>
 
@@ -191,7 +192,7 @@ const AiStudyAssistant = () => {
                 <FileText size={24} className="text-blue-300 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-medium truncate">
-                    {storedPdfs[selectedSubject].fileName}
+                    {sanitizeDisplayFileName(storedPdfs[selectedSubject].fileName, selectedSubject)}
                   </p>
                   <p className="text-white/50 text-sm">
                     Uploaded on{" "}

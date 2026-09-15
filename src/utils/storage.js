@@ -25,11 +25,11 @@ export const loadFromStorage = () => {
   try {
     const rawStoredMarks = localStorage.getItem(STORAGE_KEY);
     if (!rawStoredMarks) {
-      return createEmptySubjectData();
+      return {};
     }
     return mergeWithDefaultSubjectData(JSON.parse(rawStoredMarks));
   } catch {
-    return null;
+    return {};
   }
 };
 

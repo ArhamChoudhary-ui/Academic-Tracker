@@ -91,6 +91,18 @@ const Charts = ({ subjectsData }) => {
     }
     return null;
   };
+
+  if (Object.keys(subjectsData || {}).length === 0) {
+    return (
+      <div className="text-center py-20 border border-dashed border-white/20 rounded-2xl space-y-4 bg-white/5 backdrop-blur-sm">
+        <p className="text-2xl font-bold text-white/80">No subjects yet</p>
+        <p className="text-sm text-white/50">
+          Add subjects and enter marks on your dashboard to visualize performance breakdowns and radar charts.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg shadow-blue-500/5 p-6">

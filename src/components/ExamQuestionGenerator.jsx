@@ -229,10 +229,10 @@ const ExamQuestionGenerator = () => {
       {/* Header */}
       <div>
         <h2 className="text-3xl font-bold text-white mb-2">
-          AI Exam Question Generator
+          Exam Question Practice Generator
         </h2>
         <p className="text-white/60">
-          Generate exam-oriented questions from your study materials
+          Generate exam-oriented revision questions and practice problems from your course materials
         </p>
       </div>
 

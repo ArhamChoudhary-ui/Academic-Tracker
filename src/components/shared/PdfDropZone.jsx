@@ -1,5 +1,6 @@
 import React from "react";
 import { FileText, Upload, X } from "lucide-react";
+import { sanitizeDisplayFileName } from "../../utils/fileNameSanitizer";
 
 /**
  * Reusable PDF upload zone. Used by both AiStudyAssistant and
@@ -22,7 +23,7 @@ export function PdfDropZone({
           <FileText size={32} className="text-blue-300 flex-shrink-0 mt-1" />
           <div className="flex-1 min-w-0">
             <p className="text-white font-semibold truncate mb-1">
-              {uploadedFile.name}
+              {sanitizeDisplayFileName(uploadedFile.name)}
             </p>
             <p className="text-white/60 text-sm">
               {(uploadedFile.size / (1024 * 1024)).toFixed(2)} MB

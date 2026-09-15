@@ -1,3 +1,5 @@
+import { getSubjectInternals } from "./internalsManager";
+
 export const SUBJECTS = [
   "Probability and Statistics",
   "Discrete Mathematics",
@@ -56,6 +58,41 @@ export const ASSESSMENT_COMPONENTS = [
   { key: "fat", label: "FAT", max: 100, scaledMax: 40 },
   { key: "lab", label: "LAB", max: 100, scaledMax: 25 },
 ];
+
+/**
+ * Returns dynamic assessment components for a specific subject,
+ * incorporating any custom internal tasks configured via the Internals tab.
+ */
+export const getSubjectAssessmentComponents = (subject) => {
+  const internals = getSubjectInternals(subject);
+  const weightage = getSubjectWeightage(subject);
+  const hasLab = weightage.lab > 0;
+
+  const components = [
+    { key: "cat1", label: "CAT-1", max: 50, scaledMax: 15 },
+    { key: "cat2", label: "CAT-2", max: 50, scaledMax: 15 },
+    ...internals.map((task) => ({
+      key: task.id,
+      label: task.label,
+      max: Number(task.max) || 10,
+      scaledMax: Number(task.max) || 10,
+      isInternalTask: true,
+    })),
+    { key: "fat", label: "FAT", max: 100, scaledMax: 40 },
+  ];
+
+  if (hasLab) {
+    components.push({
+      key: "lab",
+      label: "LAB",
+      max: 100,
+      scaledMax: weightage.lab,
+    });
+  }
+
+  return components;
+};
+
 export const MAX_MARKS = {
   internal: DEFAULT_WEIGHTAGE.internal, // Default scaled internal total
   lab: DEFAULT_WEIGHTAGE.lab, // Default scaled lab
@@ -93,7 +130,7 @@ export const createEmptySubjectData = (subjectList = SUBJECTS) => {
 
 export const mergeWithDefaultSubjectData = (savedData) => {
   if (!savedData || typeof savedData !== "object") {
-    return createEmptySubjectData();
+    return {};
   }
 
   const normalizedSavedData = { ...savedData };

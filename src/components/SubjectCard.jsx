@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ASSESSMENT_COMPONENTS } from "../utils/data";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ASSESSMENT_COMPONENTS, getSubjectAssessmentComponents } from "../utils/data";
 import {
   getScaledMarks,
   predictFAT,
@@ -47,15 +47,16 @@ const SubjectCard = ({
   };
   const scaledMarks = getScaledMarks(marks, subject);
   const classScaledMarks = getScaledMarks(classAverage, subject);
-  const studentUnscaledInternal = calculateUnscaledInternal(marks);
-  const classUnscaledInternal = calculateUnscaledInternal(classAverage);
+  const studentUnscaledInternal = calculateUnscaledInternal(marks, subject);
+  const classUnscaledInternal = calculateUnscaledInternal(classAverage, subject);
   const prediction = predictFAT(marks);
   const finalTotal = scaledMarks.finalTotal;
   const percentage = finalTotal; // Already out of 100
   const grade = getGrade(percentage);
   const hasLabComponent = scaledMarks.labMax > 0;
-  const visibleAssessmentComponents = ASSESSMENT_COMPONENTS.filter(
-    ({ key }) => hasLabComponent || key !== "lab",
+  const visibleAssessmentComponents = useMemo(
+    () => getSubjectAssessmentComponents(subject),
+    [subject],
   );
   const hasClassAvg = Object.values(classAverage || {}).some(
     (value) => value !== null && value !== undefined && value !== "",
