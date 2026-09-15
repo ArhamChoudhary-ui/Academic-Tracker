@@ -13,8 +13,6 @@ Built for personal use — no backend, no login, no data leaves the browser.
 - **Goal Calculator** — given a target percentage, calculates the FAT score you need.
 - **Report view** — GPA, consistency score, and a per-subject breakdown.
 - **Charts** — bar, line, and radar views via Recharts.
-- **AI Study Assistant** — upload a syllabus PDF and get a structured study-notes summary.
-- **Exam Question Generator** — generates MCQs, 2-mark, 5-mark, numerical, and definition questions from a PDF.
 - **Study timer** — Pomodoro-style timer with session logging.
 - **CSV export** — download all marks as a spreadsheet.
 - **Cloud sync** (optional) — encrypted sync using your own credentials; data is end-to-end encrypted client-side before upload.
