@@ -17,14 +17,13 @@
 ## 📸 Preview
 
 <p align="center">
-  <img src="./assets/dashboard.png" alt="Academic Tracker Dashboard" width="900"/>
+  <img src="./assets/dash.png" alt="Academic Tracker Dashboard" width="900"/>
 </p>
 
 <p align="center">
   <em>Track your academic performance from one centralized dashboard.</em>
 </p>
 
-> Replace `./assets/dashboard.png` with your actual dashboard screenshot.
 
 ---
 
