@@ -77,16 +77,16 @@ export default function InstantGpaSection({
       </div>
 
       {/* Prominent Result Card */}
-      <div className="bg-gradient-to-br from-blue-600/30 via-indigo-600/20 to-blue-900/40 border border-blue-400/30 rounded-2xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden">
+      <div className="bg-gradient-to-br from-blue-600/30 via-indigo-600/20 to-blue-900/40 border border-blue-400/30 rounded-2xl p-6 sm:p-7 backdrop-blur-md relative overflow-hidden">
         <div className="absolute -top-12 -right-12 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
-          <div className="text-center sm:text-left space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-300 flex items-center justify-center sm:justify-start gap-1.5">
-              <Award size={16} className="text-blue-300" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+          <div className="space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-300 flex items-center gap-1.5">
+              <Award size={16} className="text-blue-300 shrink-0" />
               Calculated Semester GPA
             </span>
-            <div className="flex items-baseline justify-center sm:justify-start gap-2">
+            <div className="flex items-baseline gap-2">
               <span className="text-5xl sm:text-6xl font-black tracking-tight text-white drop-shadow-sm">
                 {result.isValid ? result.gpaFormatted : "0.00"}
               </span>
@@ -94,22 +94,22 @@ export default function InstantGpaSection({
             </div>
             <p className="text-xs text-white/60">
               {result.isValid
-                ? `Σ(Credits × Grade Points) ÷ Total Credits`
+                ? "Formula: Σ(Credits × Grade Points) ÷ Total Credits"
                 : "Add courses with valid credits and grades to calculate"}
             </p>
           </div>
 
           {/* Stat Badges */}
-          <div className="grid grid-cols-3 gap-3 w-full sm:w-auto">
-            <div className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-center">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 text-center flex-1 sm:flex-initial">
               <p className="text-[11px] font-semibold text-white/60 uppercase">Total Credits</p>
               <p className="text-xl font-bold text-white mt-0.5">{result.totalCredits}</p>
             </div>
-            <div className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-center">
+            <div className="bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 text-center flex-1 sm:flex-initial">
               <p className="text-[11px] font-semibold text-white/60 uppercase">Grade Points</p>
               <p className="text-xl font-bold text-white mt-0.5">{result.totalGradePoints}</p>
             </div>
-            <div className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-center">
+            <div className="bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 text-center flex-1 sm:flex-initial">
               <p className="text-[11px] font-semibold text-white/60 uppercase">Courses</p>
               <p className="text-xl font-bold text-white mt-0.5">{result.validCoursesCount}</p>
             </div>

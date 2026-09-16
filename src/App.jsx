@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import SubjectCard from "./components/SubjectCard";
 import AddSubjectModal from "./components/AddSubjectModal";
-import InternalsManager from "./components/InternalsManager";
 import AcademicCalculator from "./components/AcademicCalculator";
 import Charts from "./components/Charts";
 import SubjectPlanner from "./components/SubjectPlanner";
@@ -240,7 +239,6 @@ function App() {
               <nav className="flex gap-8 border-t border-white/10 overflow-x-auto -mx-6 px-6 sm:-mx-8 sm:px-8">
                 {[
                   { id: "subjects", label: "Subjects" },
-                  { id: "internals", label: "Internals" },
                   { id: "calculator", label: "Academic Calculator" },
                   { id: "charts", label: "Charts" },
                   { id: "planner", label: "Planner" },
@@ -359,15 +357,6 @@ function App() {
                 </div>
               );
             })()}
-            {activeTab === "internals" && (
-              <InternalsManager
-                subjectsData={subjectsData}
-                onOpenAddSubject={() => setShowAddSubject(true)}
-                onStructureUpdated={() => {
-                  setSubjectsData((prev) => ({ ...(prev || {}) }));
-                }}
-              />
-            )}
             {activeTab === "calculator" && <AcademicCalculator />}
             {activeTab === "charts" && (
               <div className="space-y-10">

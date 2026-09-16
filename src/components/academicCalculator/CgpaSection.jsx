@@ -180,16 +180,16 @@ export default function CgpaSection({
       </div>
 
       {/* Prominent Result Card */}
-      <div className="bg-gradient-to-br from-emerald-600/30 via-teal-600/20 to-blue-900/40 border border-emerald-400/30 rounded-2xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden">
+      <div className="bg-gradient-to-br from-emerald-600/30 via-teal-600/20 to-blue-900/40 border border-emerald-400/30 rounded-2xl p-6 sm:p-7 backdrop-blur-md relative overflow-hidden">
         <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
-          <div className="text-center sm:text-left space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center justify-center sm:justify-start gap-1.5">
-              <Award size={16} className="text-emerald-300" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+          <div className="space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+              <Award size={16} className="text-emerald-300 shrink-0" />
               Cumulative Grade Point Average (CGPA)
             </span>
-            <div className="flex items-baseline justify-center sm:justify-start gap-2">
+            <div className="flex items-baseline gap-2">
               <span className="text-5xl sm:text-6xl font-black tracking-tight text-white drop-shadow-sm">
                 {activeResult.isValid ? activeResult.cgpaFormatted : "0.00"}
               </span>
@@ -197,18 +197,18 @@ export default function CgpaSection({
             </div>
             <p className="text-xs text-white/60">
               {activeResult.isValid
-                ? "Σ(Semester GPA × Semester Credits) ÷ Total Credits (Credit-weighted)"
-                : "Enter semester GPA and credits to compute cumulative standing"}
+                ? "Credit-weighted formula: Σ(Semester GPA × Semester Credits) ÷ Total Credits"
+                : "Enter semester GPA and credits below to compute cumulative standing"}
             </p>
           </div>
 
           {/* Stat Badges */}
-          <div className="grid grid-cols-2 gap-3 w-full sm:w-auto">
-            <div className="bg-white/10 border border-white/10 rounded-xl px-5 py-3 text-center min-w-[110px]">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="bg-white/10 border border-white/10 rounded-xl px-5 py-2.5 text-center flex-1 sm:flex-initial">
               <p className="text-[11px] font-semibold text-white/60 uppercase">Total Credits</p>
               <p className="text-xl font-bold text-white mt-0.5">{activeResult.totalCredits}</p>
             </div>
-            <div className="bg-white/10 border border-white/10 rounded-xl px-5 py-3 text-center min-w-[110px]">
+            <div className="bg-white/10 border border-white/10 rounded-xl px-5 py-2.5 text-center flex-1 sm:flex-initial">
               <p className="text-[11px] font-semibold text-white/60 uppercase">
                 {mode === "courses" ? "Courses" : "Semesters"}
               </p>

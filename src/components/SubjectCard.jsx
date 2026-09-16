@@ -6,7 +6,15 @@ import {
   getGrade,
   calculateUnscaledInternal,
 } from "../utils/calculations";
-import { Check, ChevronDown, ChevronUp, Save, Trash2 } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Save, Trash2, Layers, Plus, RotateCcw } from "lucide-react";
+import {
+  DEFAULT_INTERNAL_STRUCTURE,
+  INTERNAL_PRESETS,
+  getSubjectInternals,
+  saveSubjectInternals,
+  resetSubjectInternals,
+  getTotalInternalMax,
+} from "../utils/internalsManager";
 // TODO: Add support for custom percentage rounding (1 vs 2 decimal places)
 // FIXME: Keyboard navigation sometimes skips expanded notes textarea on Safari
 const SubjectCard = ({
@@ -24,6 +32,8 @@ const SubjectCard = ({
   const [notes, setNotes] = useState(subjectData.notes || "");
   const [showPrediction, setShowPrediction] = useState(false);
   const [showClassAverage, setShowClassAverage] = useState(false);
+  const [internalTasks, setInternalTasks] = useState(() => getSubjectInternals(subject));
+  const [showInternalsConfig, setShowInternalsConfig] = useState(false);
   const [saveState, setSaveState] = useState("idle");
   const saveTimeoutRef = useRef(null);
   const handleMarkChange = (component, value) => {
@@ -54,10 +64,56 @@ const SubjectCard = ({
   const percentage = finalTotal; // Already out of 100
   const grade = getGrade(percentage);
   const hasLabComponent = scaledMarks.labMax > 0;
+  useEffect(() => {
+    setInternalTasks(getSubjectInternals(subject));
+  }, [subject]);
+
   const visibleAssessmentComponents = useMemo(
     () => getSubjectAssessmentComponents(subject),
-    [subject],
+    [subject, internalTasks],
   );
+
+  const totalInternalMarks = getTotalInternalMax(internalTasks);
+
+  const handleApplyPreset = (preset) => {
+    saveSubjectInternals(subject, preset.tasks);
+    setInternalTasks(preset.tasks);
+  };
+
+  const handleUpdateInternalTask = (idx, field, value) => {
+    const updated = [...internalTasks];
+    updated[idx] = {
+      ...updated[idx],
+      [field]: field === "max" ? Math.max(1, Number(value) || 0) : value,
+    };
+    saveSubjectInternals(subject, updated);
+    setInternalTasks(updated);
+  };
+
+  const handleAddNewInternalTask = () => {
+    const nextIdx = internalTasks.length + 1;
+    const newTask = {
+      id: `task_${Date.now()}`,
+      label: `Task ${nextIdx}`,
+      max: 10,
+    };
+    const updated = [...internalTasks, newTask];
+    saveSubjectInternals(subject, updated);
+    setInternalTasks(updated);
+  };
+
+  const handleRemoveInternalTask = (idx) => {
+    if (internalTasks.length <= 1) return;
+    const updated = internalTasks.filter((_, i) => i !== idx);
+    saveSubjectInternals(subject, updated);
+    setInternalTasks(updated);
+  };
+
+  const handleResetInternals = () => {
+    resetSubjectInternals(subject);
+    const defaults = getSubjectInternals(subject);
+    setInternalTasks(defaults);
+  };
   const hasClassAvg = Object.values(classAverage || {}).some(
     (value) => value !== null && value !== undefined && value !== "",
   );
@@ -248,14 +304,130 @@ const SubjectCard = ({
             </div>
           </div>
 
-          {/* Original Marks */}
+          {/* Assessment Marks & Inline Internals Config */}
           <div>
-            <div className="flex items-center gap-3 mb-5">
-              <h4 className="text-xl font-semibold text-white tracking-tight">
-                Assessment Marks
-              </h4>
-              <div className="h-px flex-1 bg-white/10" />
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div className="flex items-center gap-3 flex-1">
+                <h4 className="text-xl font-semibold text-white tracking-tight">
+                  Assessment Marks
+                </h4>
+                <div className="h-px flex-1 bg-white/10" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowInternalsConfig(!showInternalsConfig)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/15 text-blue-200 border border-white/10 transition-colors focus-visible:ring-2 focus-visible:ring-blue-400"
+              >
+                <Layers size={14} className="text-blue-300" />
+                {showInternalsConfig ? "Close Assessment Setup" : "Customize Internal Format"}
+              </button>
             </div>
+
+            {/* Inline Internals Configuration Panel (No Popups!) */}
+            {showInternalsConfig && (
+              <div className="bg-black/30 border border-white/15 rounded-xl p-4 sm:p-5 mb-6 space-y-4 animate-in fade-in duration-200">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
+                  <div>
+                    <p className="text-sm font-bold text-white flex items-center gap-2">
+                      <Layers size={16} className="text-blue-400" />
+                      Internal Continuous Assessment Setup
+                    </p>
+                    <p className="text-xs text-white/60">
+                      Standard format is 3 quizzes (10-10-10 = 30). Select a preset or customize tasks below.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
+                        totalInternalMarks === 30
+                          ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/30"
+                          : "bg-amber-500/20 text-amber-300 border-amber-400/30"
+                      }`}
+                    >
+                      Total: {totalInternalMarks} / 30 marks
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleResetInternals}
+                      className="text-xs text-white/60 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 transition-colors"
+                      title="Reset to 3 quizzes (10-10-10)"
+                    >
+                      <RotateCcw size={12} /> Reset
+                    </button>
+                  </div>
+                </div>
+
+                {/* Presets */}
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-white/50 mb-2">
+                    Quick Presets
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {INTERNAL_PRESETS.map((preset) => (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => handleApplyPreset(preset)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 border border-white/10 text-white/80 hover:text-white transition-colors"
+                      >
+                        {preset.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Task Rows */}
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                    Internal Assessment Tasks
+                  </p>
+                  {internalTasks.map((task, idx) => (
+                    <div
+                      key={task.id || idx}
+                      className="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5"
+                    >
+                      <input
+                        type="text"
+                        value={task.label}
+                        onChange={(e) => handleUpdateInternalTask(idx, "label", e.target.value)}
+                        placeholder="e.g. Case Study"
+                        className="flex-1 bg-white/10 border border-white/10 rounded px-2.5 py-1.5 text-xs text-white placeholder-white/30 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                      />
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-white/50">Max:</span>
+                        <input
+                          type="number"
+                          min="1"
+                          max="50"
+                          value={task.max}
+                          onChange={(e) => handleUpdateInternalTask(idx, "max", e.target.value)}
+                          className="w-16 bg-white/10 border border-white/10 rounded px-2 py-1.5 text-xs text-white text-center focus:outline-none focus:ring-1 focus:ring-blue-400"
+                        />
+                      </div>
+                      {internalTasks.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveInternalTask(idx)}
+                          className="p-1.5 text-white/40 hover:text-red-300 rounded"
+                          title="Remove task"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={handleAddNewInternalTask}
+                    className="text-xs text-blue-300 hover:text-blue-200 font-semibold flex items-center gap-1 pt-1"
+                  >
+                    <Plus size={13} /> Add another task
+                  </button>
+                </div>
+              </div>
+            )}
+
             <p className="text-sm text-white/60 mb-4">
               Enter raw marks for each assessment (decimals allowed). We scale
               them automatically.
