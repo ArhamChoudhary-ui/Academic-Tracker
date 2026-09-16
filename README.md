@@ -125,7 +125,7 @@ This avoids incorrectly treating every semester as having equal weight.
 
 ---
 
-# 📈 3. Performance Analytics
+# 3. Performance Analytics
 
 Turn raw marks into useful visual insights.
 
