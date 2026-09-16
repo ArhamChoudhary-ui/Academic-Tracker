@@ -1,10 +1,11 @@
 import React from "react";
-import { Book, BookOpen, Calendar, LineChart, Layers } from "lucide-react";
+import { Book, BookOpen, Calendar, LineChart, Layers, Calculator } from "lucide-react";
 
 export default function BottomNavigation({ activeTab, onTabChange }) {
   const tabs = [
     { id: "subjects", label: "Subjects", icon: Book },
     { id: "internals", label: "Internals", icon: Layers },
+    { id: "calculator", label: "Calculator", icon: Calculator },
     { id: "charts", label: "Charts", icon: LineChart },
     { id: "planner", label: "Planner", icon: Calendar },
     { id: "syllabus", label: "Syllabus", icon: BookOpen },
