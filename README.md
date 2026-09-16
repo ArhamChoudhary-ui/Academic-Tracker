@@ -14,7 +14,7 @@
 
 ---
 
-## 📸 Preview
+## Preview
 
 <p align="center">
   <img src="./assets/dash.png" alt="Academic Tracker Dashboard" width="900"/>
@@ -27,7 +27,7 @@
 
 ---
 
-## ✨ Why Academic Tracker?
+##  Why Academic Tracker?
 
 University students often have their academic information scattered across spreadsheets, LMS portals, notes, calculators, and calendars.
 
@@ -35,17 +35,17 @@ University students often have their academic information scattered across sprea
 
 It lets you:
 
-* 📊 Track CATs, quizzes, assignments, FATs, labs, and internals
-* 🧮 Calculate weighted internal marks automatically
-* 🎓 Calculate semester GPA and cumulative CGPA
-* 📈 Visualize academic performance
-* 🎯 Calculate the marks required to reach a target grade
-* 🔮 Estimate required FAT performance
-* 📚 Organize syllabi and revision material
-* ⏱️ Track focused study sessions
-* 📅 Plan assignments, exams, and study milestones
-* 📝 Generate revision notes and practice questions from uploaded syllabi
-* 🎮 Take a quick break with the built-in Tetris game
+* Track CATs, quizzes, assignments, FATs, labs, and internals
+* Calculate weighted internal marks automatically
+* Calculate semester GPA and cumulative CGPA
+* Visualize academic performance
+* Calculate the marks required to reach a target grade
+* Estimate required FAT performance
+* Organize syllabi and revision material
+* Track focused study sessions
+* Plan assignments, exams, and study milestones
+* Generate revision notes and practice questions from uploaded syllabi
+* Take a quick break with the built-in Tetris game
 
 And most importantly:
 
@@ -53,9 +53,9 @@ And most importantly:
 
 ---
 
-# 🚀 Features
+# Features
 
-## 📊 1. Academic Performance Tracking
+## 1. Academic Performance Tracking
 
 Track academic performance on a **subject-by-subject basis**.
 
@@ -86,7 +86,7 @@ The application automatically scales assessment marks according to the configure
 
 ---
 
-# 🧮 2. VIT GPA & CGPA Calculator
+# 2. VIT GPA & CGPA Calculator
 
 Academic Tracker includes a credit-weighted GPA calculator based on the **VIT 10-point grading system**.
 
@@ -131,12 +131,12 @@ Turn raw marks into useful visual insights.
 
 Academic Tracker provides:
 
-* 📊 Bar charts
-* 📈 Performance trends
-* 📉 Score distributions
-* 🕸️ Multi-dimensional performance visualization
-* 📚 Subject-level comparisons
-* 📋 Academic summary reports
+* Bar charts
+* Performance trends
+* Score distributions
+* Multi-dimensional performance visualization
+* Subject-level comparisons
+* Academic summary reports
 
 You can analyze both:
 
@@ -148,7 +148,7 @@ and
 
 ---
 
-# 🎯 4. Goal Calculator
+# 4. Goal Calculator
 
 Wondering:
 
@@ -178,7 +178,7 @@ This turns the tracker into a planning tool rather than just a marks calculator.
 
 ---
 
-# 🔮 5. FAT Prediction & Benchmarks
+# 5. FAT Prediction & Benchmarks
 
 Academic Tracker can use previous performance data to provide projected FAT requirements and benchmarks.
 
@@ -195,7 +195,7 @@ This helps answer questions such as:
 
 ---
 
-# ⏱️ 6. Study Planner & Focus Timer
+# 6. Study Planner & Focus Timer
 
 Academic Tracker also includes a built-in study workflow.
 
@@ -214,14 +214,14 @@ Features include:
 
 Plan:
 
-* 📚 Study sessions
-* 📝 Assignments
-* 📅 Exams
-* 🎯 Syllabus milestones
+* Study sessions
+* Assignments
+* Exams
+* Syllabus milestones
 
 ---
 
-# 📚 7. Syllabus Document Hub
+# 7. Syllabus Document Hub
 
 Upload course syllabi directly into Academic Tracker.
 
@@ -229,19 +229,19 @@ Powered by **PDF.js**, the document hub supports client-side PDF processing.
 
 ### Features
 
-* 📄 Upload syllabus PDFs
-* 👀 View documents
-* 🧹 Clean document names
-* 🔎 Extract syllabus text
-* 📝 Build revision notes
-* ❓ Generate practice questions
-* 📌 Generate key definitions
+* Upload syllabus PDFs
+* View documents
+* Clean document names
+* Extract syllabus text
+* Build revision notes
+* Generate practice questions
+* Generate key definitions
 
 All processing happens locally in the browser.
 
 ---
 
-# 🎮 8. Break Mode
+# 8. Break Mode
 
 Studying too long?
 
@@ -253,7 +253,7 @@ Because sometimes the best productivity feature is knowing when to stop studying
 
 ---
 
-# 🔐 Privacy First
+# Privacy First
 
 Academic Tracker is designed around a **client-side-first architecture**.
 
@@ -273,7 +273,7 @@ Your academic information does not need to leave your machine.
 
 ---
 
-# 🛠️ Tech Stack
+# Tech Stack
 
 | Category          | Technology               |
 | ----------------- | ------------------------ |
@@ -291,7 +291,7 @@ Your academic information does not need to leave your machine.
 
 ---
 
-# 🏗️ Architecture
+# Architecture
 
 Academic Tracker follows a modular client-side architecture.
 
@@ -323,7 +323,7 @@ Academic Tracker follows a modular client-side architecture.
 
 ---
 
-# 📁 Project Structure
+# Project Structure
 
 ```text
 Academic-Tracker/
@@ -367,7 +367,7 @@ Academic-Tracker/
 
 ---
 
-# 🧠 Core Calculations
+# Core Calculations
 
 Academic Tracker contains a dedicated calculation layer rather than putting academic logic directly inside UI components.
 
@@ -393,7 +393,7 @@ This separation keeps the UI focused on presentation while the calculation utili
 
 ---
 
-# 🧪 Testing
+# Testing
 
 The project uses **Vitest** and **Testing Library**.
 
@@ -475,7 +475,7 @@ http://localhost:5173
 
 ---
 
-# 📜 Available Scripts
+# Available Scripts
 
 | Command              | Description              |
 | -------------------- | ------------------------ |
@@ -524,7 +524,7 @@ Academic Tracker is actively evolving.
 
 ---
 
-# 💡 Design Philosophy
+# Design Philosophy
 
 Academic Tracker is built around three principles:
 
@@ -542,7 +542,7 @@ Academic data should remain under the student's control.
 
 ---
 
-# 👨‍💻 Author
+# Author
 
 **Arham Choudhary**
 
@@ -558,28 +558,28 @@ Interested in:
 
 ---
 
-# ⭐ Support
+# Support
 
 If you find Academic Tracker useful:
 
-⭐ **Star the repository**
+**Star the repository**
 
-🐛 **Report an issue**
+**Report an issue**
 
-💡 **Suggest a feature**
+**Suggest a feature**
 
-🤝 **Contribute**
+**Contribute**
 
 ---
 
-## 📄 License
+## License
 
 This project is open-source and available under the repository's license.
 
 ---
 
 <p align="center">
-  <strong>Built with React ⚛️ • Vite ⚡ • Tailwind CSS 🎨</strong>
+  <strong>Built with React  • Vite • Tailwind CSS </strong>
 </p>
 
 <p align="center">
