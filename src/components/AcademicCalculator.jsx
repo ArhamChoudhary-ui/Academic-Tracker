@@ -16,7 +16,6 @@ import {
   saveAcademicCalculatorState,
   createInitialCourses,
   createInitialSemesters,
-  createInitialCourseWiseSemesters,
 } from "../utils/academicCalculator";
 
 export default function AcademicCalculator() {
@@ -59,25 +58,10 @@ export default function AcademicCalculator() {
     }));
   };
 
-  const handleCourseWiseSemestersChange = (newCourseWise) => {
-    setCalculatorState((prev) => ({
-      ...prev,
-      courseWiseSemesters: newCourseWise,
-    }));
-  };
-
-  const handleCgpaModeChange = (newMode) => {
-    setCalculatorState((prev) => ({
-      ...prev,
-      cgpaMode: newMode,
-    }));
-  };
-
   const handleResetCgpa = () => {
     setCalculatorState((prev) => ({
       ...prev,
       semesters: createInitialSemesters(),
-      courseWiseSemesters: createInitialCourseWiseSemesters(),
     }));
     showToast("CGPA calculator reset to 8 default semesters.");
   };
@@ -145,10 +129,6 @@ export default function AcademicCalculator() {
           <CgpaSection
             semesters={calculatorState.semesters}
             onSemestersChange={handleSemestersChange}
-            courseWiseSemesters={calculatorState.courseWiseSemesters}
-            onCourseWiseSemestersChange={handleCourseWiseSemestersChange}
-            mode={calculatorState.cgpaMode}
-            onModeChange={handleCgpaModeChange}
             onReset={handleResetCgpa}
           />
         ) : (

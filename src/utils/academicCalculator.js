@@ -57,26 +57,6 @@ export const createInitialSemesters = () => [
   { id: "sem-8", name: "Semester 8", gpa: "", credits: "" },
 ];
 
-export const createInitialCourseWiseSemesters = () => [
-  {
-    id: "cw-sem-1",
-    name: "Semester 1",
-    courses: [
-      { id: "cw-1-1", name: "Calculus for Engineers", credits: 4, grade: "A" },
-      { id: "cw-1-2", name: "Structured Programming", credits: 4, grade: "S" },
-      { id: "cw-1-3", name: "Engineering Physics", credits: 3, grade: "B" },
-    ],
-  },
-  {
-    id: "cw-sem-2",
-    name: "Semester 2",
-    courses: [
-      { id: "cw-2-1", name: "Discrete Mathematics", credits: 4, grade: "S" },
-      { id: "cw-2-2", name: "Digital Logic & Design", credits: 4, grade: "A" },
-    ],
-  },
-];
-
 // ─── Validation Helpers ───────────────────────────────────────────────────────
 
 /**
@@ -409,43 +389,17 @@ export function loadAcademicCalculatorState() {
       return {
         courses: createInitialCourses(),
         semesters: createInitialSemesters(),
-        courseWiseSemesters: createInitialCourseWiseSemesters(),
-        cgpaMode: "semester", // "semester" or "courses"
-        whatIfState: {
-          currentCGPA: "",
-          currentCredits: "",
-          upcomingCredits: 20,
-          targetCGPA: 9.0,
-        },
       };
     }
     const parsed = JSON.parse(serialized);
     return {
       courses: Array.isArray(parsed.courses) ? parsed.courses : createInitialCourses(),
       semesters: Array.isArray(parsed.semesters) ? parsed.semesters : createInitialSemesters(),
-      courseWiseSemesters: Array.isArray(parsed.courseWiseSemesters)
-        ? parsed.courseWiseSemesters
-        : createInitialCourseWiseSemesters(),
-      cgpaMode: parsed.cgpaMode === "courses" ? "courses" : "semester",
-      whatIfState: parsed.whatIfState || {
-        currentCGPA: "",
-        currentCredits: "",
-        upcomingCredits: 20,
-        targetCGPA: 9.0,
-      },
     };
   } catch {
     return {
       courses: createInitialCourses(),
       semesters: createInitialSemesters(),
-      courseWiseSemesters: createInitialCourseWiseSemesters(),
-      cgpaMode: "semester",
-      whatIfState: {
-        currentCGPA: "",
-        currentCredits: "",
-        upcomingCredits: 20,
-        targetCGPA: 9.0,
-      },
     };
   }
 }
