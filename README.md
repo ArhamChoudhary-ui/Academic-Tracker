@@ -4,11 +4,11 @@
 
 <p align="center">
   <a href="https://academic-tracker-swart.vercel.app/">
-    <strong>🚀 Live Demo</strong>
+    <strong>Live Demo</strong>
   </a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
   <a href="https://github.com/ArhamChoudhary-ui/Academic-Tracker">
-    <strong>💻 Source Code</strong>
+    <strong>Source Code</strong>
   </a>
 </p>
 
@@ -423,7 +423,7 @@ npm run preview
 
 ---
 
-# ⚡ Getting Started
+# Getting Started
 
 ## Prerequisites
 
@@ -487,7 +487,7 @@ http://localhost:5173
 
 ---
 
-# 🗺️ Roadmap
+# Roadmap
 
 Academic Tracker is actively evolving.
 
